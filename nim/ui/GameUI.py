@@ -1,4 +1,5 @@
 from wx import *
+
 from ui.MainMenuePanel import *
 from ui.MainGamePanel import *
 from ui.SettingsPanel import *
@@ -23,7 +24,6 @@ class GameUI:
         # Create the panel for the maingame
         self.main_game_panel = MainGamePanel(self.frame)
 
-        
         self.sizer = BoxSizer(VERTICAL)
         self.sizer.Add(self.main_menue_panel, 1, EXPAND)
         self.sizer.Add(self.main_game_panel, 1, EXPAND)
@@ -31,6 +31,7 @@ class GameUI:
         self.frame.SetSizer(self.sizer)
 
         self.show_main_menue()
+        self.frame.Centre()
         self.frame.Show()
 
     def show_main_menue(self):

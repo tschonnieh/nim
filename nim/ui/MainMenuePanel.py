@@ -26,7 +26,7 @@ class MainMenuePanel(Panel):
         # Create menue buttons
         b_start = Button(self, label="Start game")
         b_start.SetFont(menue_font)
-        b_choose_players = Button(self, label="Choose players")
+        b_choose_players = Button(self, label="Settings")
         b_choose_players.SetFont(menue_font)
         b_quit = Button(self, label="Quit game")
         b_quit.SetFont(menue_font)
