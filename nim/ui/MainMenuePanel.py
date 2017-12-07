@@ -22,7 +22,10 @@ class MainMenuePanel(wx.Panel):
         self.build_ui()
 
     def build_ui(self):
-
+        """
+        Creates all UI elements of the panel
+        :return: None
+        """
         # Create menue buttons
         btn_max_size = wx.Size(250, -1)
         b_start = wx.Button(self, label="Start game")
@@ -43,12 +46,12 @@ class MainMenuePanel(wx.Panel):
         # Align buttons vertical
         vert_box = wx.BoxSizer(wx.VERTICAL)
 
+        # Align all elements vertical
         vert_box.AddSpacer(25)
         vert_box.Add(b_start, 0, wx.ALIGN_CENTER | wx.EXPAND | wx.ALL, 5)
         vert_box.Add(b_choose_players, 0, wx.ALIGN_CENTER | wx.EXPAND | wx.ALL, 5)
         vert_box.Add(b_quit, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.EXPAND | wx.ALL, 5)
         vert_box.AddStretchSpacer(1)
-        
         self.SetSizer(vert_box)
 
     def quit_btn_click(self, event):
