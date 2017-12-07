@@ -1,5 +1,10 @@
-from ui.GameUI import GameUI
+import wx
+
 
 print("Starting nim game ...")
-ui = GameUI()
-ui.run()
+app = wx.App()
+
+from nim.ui.MainWindow import MainWindow
+ui = MainWindow()
+
+app.MainLoop()
