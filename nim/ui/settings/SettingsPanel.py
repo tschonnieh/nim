@@ -34,14 +34,34 @@ class SettingsPanel(ScrolledPanel):
         """
         # Create two panels (right and left side)
         left_panel = self.build_menue_panel()
-        self.right_panel = wx.Panel(self)
-        self.right_panel.SetBackgroundColour(COLORS.PANEL_SETTINGS_DETAILS_BG)
+
+        # Create all panels, which can be on the right side
+        self.right_panels = []
+
+        self.right_empty_panel = wx.Panel(self)
+        self.right_empty_panel.SetBackgroundColour(COLORS.PANEL_SETTINGS_DETAILS_BG)
+        self.right_panels.append(self.right_empty_panel)
+
+        self.select_gamesize_panel = SelectGamesizePanel(self)
+        self.right_panels.append(self.select_gamesize_panel)
+
+        self.select_player1_panel = SelectPlayerPanel(self)
+        self.right_panels.append(self.select_player1_panel)
+
+        self.select_player2_panel = SelectPlayerPanel(self)
+        self.right_panels.append(self.select_player2_panel)
+
+        for panel in self.right_panels:
+            panel.Hide()
 
         # Align left and right panel horizontal
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(left_panel, 0, wx.ALIGN_LEFT | wx.ALL, 10)
-        hbox.Add(self.right_panel, 1, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM, 10)
-        self.SetSizerAndFit(hbox)
+        self.hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.hbox.Add(left_panel, 0, wx.ALIGN_LEFT | wx.ALL, 10)
+        self.hbox.Add(self.right_empty_panel, 1, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM, 10)
+        self.hbox.Add(self.select_gamesize_panel, 1, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM, 10)
+        self.hbox.Add(self.select_player1_panel, 1, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM, 10)
+        self.hbox.Add(self.select_player2_panel, 1, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM, 10)
+        self.SetSizerAndFit(self.hbox)
         self.Layout()
 
     def build_menue_panel(self) -> wx.Panel:
@@ -86,18 +106,22 @@ class SettingsPanel(ScrolledPanel):
 
     def show_select_gamesize(self):
         """ Shows the selection panel to choose the size of the game """
-        self.right_panel.DestroyChildren()
-        select_gamesize_panel = SelectGamesizePanel(self.right_panel)
-        self.Layout()
+        self.show_panel(self.select_gamesize_panel)
 
     def show_select_player1(self):
         """ Shows the selection panel to choose the first player """
-        self.right_panel.DestroyChildren()
-        select_player1_panel = SelectPlayerPanel(self.right_panel)
-        self.Layout()
+        self.show_panel(self.select_player1_panel)
 
     def show_select_player2(self):
         """ Shows the selection panel to choose the second player """
-        self.right_panel.DestroyChildren()
-        select_player2_panel = SelectPlayerPanel(self.right_panel)
+        self.show_panel(self.select_player2_panel)
+
+    def show_panel(self, to_show_panel):
+        """
+        Shows a panel and hides all others
+        :param to_show_panel: The panel to show in the frame
+        """
+        for panel in self.right_panels:
+            panel.Hide()
+        to_show_panel.Show()
         self.Layout()

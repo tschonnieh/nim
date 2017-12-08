@@ -25,12 +25,9 @@ class SelectGamesizePanel(wx.Panel):
         :return: None
         """
         radiobox_panel = wx.Panel(self)
-        vbox = wx.BoxSizer(wx.VERTICAL)
 
-        title = wx.StaticText(self, label="Select the gamesize")
-        title.SetFont(FONTS.SUB_SUB_TITLE)
-
-        sb = wx.StaticBox(radiobox_panel, label='Gamesize')
+        sb = wx.StaticBox(radiobox_panel, label='Select the Gamesize')
+        sb.SetFont(FONTS.SUB_MENUE_ITEM)
         sbs = wx.StaticBoxSizer(sb, orient=wx.VERTICAL)
         sbs.Add(wx.RadioButton(radiobox_panel, label='Small (3-2-1)', style=wx.RB_GROUP))
         sbs.Add(wx.RadioButton(radiobox_panel, label='Normal (4-3-2)'))
@@ -43,14 +40,15 @@ class SelectGamesizePanel(wx.Panel):
 
         radiobox_panel.SetSizer(sbs)
 
+        # hbox2 aligns buttons horizontal
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         saveButton = wx.Button(self, label='Save')
         cancelButton = wx.Button(self, label='Cancel')
         hbox2.Add(saveButton, flag=wx.RIGHT)
         hbox2.Add(cancelButton, flag=wx.LEFT, border=5)
 
-        vbox.Add(title, 0, wx.ALIGN_CENTER | wx.EXPAND | wx.ALL, 15)
-        vbox.Add(radiobox_panel, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
-        vbox.Add(hbox2, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
+        vbox1 = wx.BoxSizer(wx.VERTICAL)
+        vbox1.Add(radiobox_panel, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
+        vbox1.Add(hbox2, 0, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
 
-        self.SetSizerAndFit(vbox)
+        self.SetSizerAndFit(vbox1)
