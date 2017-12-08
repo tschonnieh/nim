@@ -24,31 +24,32 @@ class SelectGamesizePanel(wx.Panel):
         Creates all UI elements of the panel
         :return: None
         """
-        radiobox_panel = wx.Panel(self)
+        content_panel = wx.Panel(self)
 
-        sb = wx.StaticBox(radiobox_panel, label='Select the Gamesize')
-        sb.SetFont(FONTS.SUB_MENUE_ITEM)
-        sbs = wx.StaticBoxSizer(sb, orient=wx.VERTICAL)
-        sbs.Add(wx.RadioButton(radiobox_panel, label='Small (3-2-1)', style=wx.RB_GROUP))
-        sbs.Add(wx.RadioButton(radiobox_panel, label='Normal (4-3-2)'))
-        sbs.Add(wx.RadioButton(radiobox_panel, label='Large (5-4-3)'))
+        content_box = wx.StaticBox(content_panel, label='Select the gamesize')
+        content_box.SetFont(FONTS.SUB_MENUE_ITEM)
+        content_box_sizer = wx.StaticBoxSizer(content_box, orient=wx.VERTICAL)
+        content_box_sizer.Add(wx.RadioButton(content_panel, label='Small (3-2-1)', style=wx.RB_GROUP))
+        content_box_sizer.Add(wx.RadioButton(content_panel, label='Normal (4-3-2)'))
+        content_box_sizer.Add(wx.RadioButton(content_panel, label='Large (5-4-3)'))
+        content_panel.SetSizer(content_box_sizer)
 
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-        hbox1.Add(wx.RadioButton(radiobox_panel, label='Custom'))
-        hbox1.Add(wx.TextCtrl(radiobox_panel), flag=wx.LEFT, border=5)
-        sbs.Add(hbox1)
+        hbox1.Add(wx.RadioButton(content_panel, label='Custom'))
+        hbox1.Add(wx.TextCtrl(content_panel), flag=wx.LEFT, border=5)
+        content_box_sizer.Add(hbox1)
 
-        radiobox_panel.SetSizer(sbs)
-
-        # hbox2 aligns buttons horizontal
-        hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        # Aligns butttons horizontal
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         saveButton = wx.Button(self, label='Save')
         cancelButton = wx.Button(self, label='Cancel')
-        hbox2.Add(saveButton, flag=wx.RIGHT)
-        hbox2.Add(cancelButton, flag=wx.LEFT, border=5)
+        button_sizer.Add(saveButton, flag=wx.RIGHT)
+        button_sizer.Add(cancelButton, flag=wx.LEFT, border=5)
 
+        # Place content on the top and buttons at bottom
         vbox1 = wx.BoxSizer(wx.VERTICAL)
-        vbox1.Add(radiobox_panel, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
-        vbox1.Add(hbox2, 0, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
+        vbox1.Add(content_panel, proportion=2, flag=wx.EXPAND | wx.RIGHT, border=5)
+        vbox1.AddStretchSpacer(1)
+        vbox1.Add(button_sizer, 0, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
 
         self.SetSizerAndFit(vbox1)
