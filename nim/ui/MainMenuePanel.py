@@ -4,6 +4,8 @@ from nim.Event import *
 import nim.ui.res.values.colors as col
 import nim.ui.res.values.fonts as FONTS
 
+import nim.ui.res.values.colors as COLORS
+import nim.ui.res.values.fonts as FONTS
 
 class MainMenuePanel(wx.Panel):
 
@@ -15,7 +17,7 @@ class MainMenuePanel(wx.Panel):
         self.evt_show_settings = Event()
 
         # Set MainMenuePanel color and to fullscreen
-        self.SetBackgroundColour(col.MAIN_PANEL_BG)
+        self.SetBackgroundColour(col.MAIN_MENUE_BG)
         self.SetSize(parent.Size)
 
         # Init the ui elements
@@ -31,12 +33,17 @@ class MainMenuePanel(wx.Panel):
         b_start = wx.Button(self, label="Start game")
         b_start.SetFont(FONTS.MAIN_MENUE_ITEM)
         b_start.SetMaxSize(btn_max_size)
+        b_start.SetBackgroundColour(COLORS.MAIN_MENUE_BTN)
+
         b_choose_players = wx.Button(self, label="Settings")
         b_choose_players.SetFont(FONTS.MAIN_MENUE_ITEM)
         b_choose_players.SetMaxSize(btn_max_size)
+        b_choose_players.SetBackgroundColour(COLORS.MAIN_MENUE_BTN)
+
         b_quit = wx.Button(self, label="Quit game")
         b_quit.SetFont(FONTS.MAIN_MENUE_ITEM)
         b_quit.SetMaxSize(btn_max_size)
+        b_quit.SetBackgroundColour(COLORS.MAIN_MENUE_BTN)
 
         # Set the function bindings for the menue buttons
         b_start.Bind(wx.EVT_BUTTON, lambda x: self.evt_startgame())

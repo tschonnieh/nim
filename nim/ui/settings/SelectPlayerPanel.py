@@ -10,7 +10,7 @@ class SelectPlayerPanel(wx.Panel):
     def __init__(self, parent):
         super(SelectPlayerPanel, self).__init__(parent)
 
-        self.SetBackgroundColour(COLORS.PANEL_SETTINGS_DETAILS_BG)
+        self.SetBackgroundColour(COLORS.SETTINGS_DETAILS_BG)
         self.SetSize(parent.Size)
 
         # The events
@@ -32,12 +32,15 @@ class SelectPlayerPanel(wx.Panel):
                      'A KI playing with random actions',
                      'A KI, which always makes the best possible action. The KI uses a mathematical model']
         player_list_box = wx.ListBox(content_panel, size=(-1, -1), choices=players, style=wx.LB_SINGLE)
+        player_list_box.SetFont(FONTS.TXT_NORMAL)
 
         # Create a panel on the right which sows detailed information about the player
         details_panel = wx.Panel(content_panel)
         details_box = wx.StaticBox(details_panel, label='Details')
+        details_box.SetFont(FONTS.TXT_BIG)
         details_bsizer = wx.StaticBoxSizer(details_box, orient=wx.VERTICAL)
         detail_text = wx.StaticText(details_box, label="Description of the player ...", style=wx.TE_MULTILINE)
+        detail_text.SetFont(FONTS.TXT_NORMAL)
         details_bsizer.Add(detail_text)
         details_panel.SetSizer(details_bsizer)
 

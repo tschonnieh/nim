@@ -17,7 +17,7 @@ class SettingsPanel(ScrolledPanel):
         self.SetupScrolling()
 
         # Set MainMenuePanel color and to fullscreen
-        self.SetBackgroundColour(COLORS.MAIN_PANEL_BG)
+        self.SetBackgroundColour(COLORS.MAIN_MENUE_BG)
         self.SetSize(parent.Size)
         self.SetMinSize(wx.Size(400, 400))
 
@@ -39,7 +39,7 @@ class SettingsPanel(ScrolledPanel):
         self.right_panels = []
 
         self.right_empty_panel = wx.Panel(self)
-        self.right_empty_panel.SetBackgroundColour(COLORS.PANEL_SETTINGS_DETAILS_BG)
+        self.right_empty_panel.SetBackgroundColour(COLORS.SETTINGS_DETAILS_BG)
         self.right_panels.append(self.right_empty_panel)
 
         self.select_gamesize_panel = SelectGamesizePanel(self)
@@ -78,15 +78,19 @@ class SettingsPanel(ScrolledPanel):
 
         btn_gamesize = wx.Button(left_panel, label='Gamesize')
         btn_gamesize.SetFont(FONTS.SUB_MENUE_ITEM)
+        btn_gamesize.SetBackgroundColour(COLORS.SETTINGS_BTN)
 
         btn_player1 = wx.Button(left_panel, label='Player 1')
         btn_player1.SetFont(FONTS.SUB_MENUE_ITEM)
+        btn_player1.SetBackgroundColour(COLORS.SETTINGS_BTN)
 
         btn_player2 = wx.Button(left_panel, label='Player 2')
         btn_player2.SetFont(FONTS.SUB_MENUE_ITEM)
+        btn_player2.SetBackgroundColour(COLORS.SETTINGS_BTN)
 
         btn_back = wx.Button(left_panel, label='Back')
         btn_back.SetFont(FONTS.SUB_MENUE_ITEM)
+        btn_back.SetBackgroundColour(COLORS.SETTINGS_BTN)
 
         # Set the function bindings for the menue buttons
         btn_gamesize.Bind(wx.EVT_BUTTON, lambda e: self.show_select_gamesize())

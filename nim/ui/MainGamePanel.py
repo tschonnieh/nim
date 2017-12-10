@@ -9,7 +9,7 @@ class MainGamePanel(Panel):
         super(MainGamePanel, self).__init__(parent)
 
         # Set MainMenuePanel color and to fullscreen
-        self.SetBackgroundColour(col.MAIN_PANEL_BG)
+        self.SetBackgroundColour(col.MAIN_MENUE_BG)
         self.SetSize(parent.Size)
 
         # Init the ui elements

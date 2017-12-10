@@ -10,7 +10,7 @@ class SelectGamesizePanel(wx.Panel):
     def __init__(self, parent, **args):
         super(SelectGamesizePanel, self).__init__(parent)
 
-        self.SetBackgroundColour(COLORS.PANEL_SETTINGS_DETAILS_BG)
+        self.SetBackgroundColour(COLORS.SETTINGS_DETAILS_BG)
         self.SetSize(parent.Size)
 
         # The events
@@ -25,19 +25,29 @@ class SelectGamesizePanel(wx.Panel):
         :return: None
         """
         content_panel = wx.Panel(self)
-
         content_box = wx.StaticBox(content_panel, label='Select the gamesize')
         content_box.SetFont(FONTS.SUB_MENUE_ITEM)
         content_box_sizer = wx.StaticBoxSizer(content_box, orient=wx.VERTICAL)
-        content_box_sizer.Add(wx.RadioButton(content_panel, label='Small (3-2-1)', style=wx.RB_GROUP))
-        content_box_sizer.Add(wx.RadioButton(content_panel, label='Normal (4-3-2)'))
-        content_box_sizer.Add(wx.RadioButton(content_panel, label='Large (5-4-3)'))
+
+        # Create radio buttons
+        radio_btn_1 = wx.RadioButton(content_panel, label='Small (3-2-1)', style=wx.RB_GROUP)
+        radio_btn_1.SetFont(FONTS.TXT_NORMAL)
+        radio_btn_2 = wx.RadioButton(content_panel, label='Normal (4-3-2)', style=wx.RB_GROUP)
+        radio_btn_2.SetFont(FONTS.TXT_NORMAL)
+        radio_btn_3 = wx.RadioButton(content_panel, label='Large (5-4-3)', style=wx.RB_GROUP)
+        radio_btn_3.SetFont(FONTS.TXT_NORMAL)
+
+        # Add radio buttons to content_box_sizer
+        content_box_sizer.Add(radio_btn_1)
+        content_box_sizer.Add(radio_btn_2)
+        content_box_sizer.Add(radio_btn_3)
         content_panel.SetSizer(content_box_sizer)
 
-        hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-        hbox1.Add(wx.RadioButton(content_panel, label='Custom'))
-        hbox1.Add(wx.TextCtrl(content_panel), flag=wx.LEFT, border=5)
-        content_box_sizer.Add(hbox1)
+        # Create the custom radio button
+        custom_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        custom_button_sizer.Add(wx.RadioButton(content_panel, label='Custom'))
+        custom_button_sizer.Add(wx.TextCtrl(content_panel), flag=wx.LEFT, border=5)
+        content_box_sizer.Add(custom_button_sizer)
 
         # Aligns butttons horizontal
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
