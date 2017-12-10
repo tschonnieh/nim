@@ -7,7 +7,7 @@ FRAME_BG = "#e8e8e8"
 MAIN_MENUE_BG = "#e8e8e8"
 
 # The button background color in the main menue
-MAIN_MENUE_BTN = wx.Colour(195, 195, 195)
+MAIN_MENUE_BTN = wx.Colour(190, 190, 215)
 
 # The button background color in the settings
 SETTINGS_BTN = wx.Colour(190, 190, 215)
