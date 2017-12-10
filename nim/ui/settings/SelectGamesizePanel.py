@@ -59,7 +59,9 @@ class SelectGamesizePanel(wx.Panel):
         # Aligns butttons horizontal
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         saveButton = wx.Button(self, label='Save')
+        saveButton.Bind(wx.EVT_BUTTON, self.save_button_clicked)
         cancelButton = wx.Button(self, label='Cancel')
+        cancelButton.Bind(wx.EVT_BUTTON, self.cancel_button_clicked)
         button_sizer.Add(saveButton, flag=wx.RIGHT)
         button_sizer.Add(cancelButton, flag=wx.LEFT, border=5)
 
@@ -71,3 +73,19 @@ class SelectGamesizePanel(wx.Panel):
         vertical_box.Add(button_sizer, 0, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
 
         self.SetSizerAndFit(vertical_box)
+
+    def save_button_clicked(self, evt):
+        """
+        Action when the 'save' button is clicked
+        :param evt: The wx event object
+        :return:
+        """
+        print("Save clicked")
+
+    def cancel_button_clicked(selfself, evt):
+        """
+        Action when the 'cancel' button is clicked
+        :param evt: The wx event object
+        :return:
+        """
+        print("Cancel clicked")

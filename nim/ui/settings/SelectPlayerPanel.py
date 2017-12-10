@@ -64,7 +64,9 @@ class SelectPlayerPanel(wx.Panel):
         # Cancel and save button
         hsizer_buttons = wx.BoxSizer(wx.HORIZONTAL)
         saveButton = wx.Button(self, label='Save')
+        saveButton.Bind(wx.EVT_BUTTON, self.save_button_clicked)
         cancelButton = wx.Button(self, label='Cancel')
+        cancelButton.Bind(wx.EVT_BUTTON, self.cancel_button_clicked)
         hsizer_buttons.Add(saveButton, flag=wx.RIGHT)
         hsizer_buttons.Add(cancelButton, flag=wx.LEFT, border=5)
 
@@ -78,12 +80,27 @@ class SelectPlayerPanel(wx.Panel):
 
     def list_box_selected(self, evt):
         """
-
-        :param evt:
+        Action when user selects a item on the player seelct box
+        :param evt: The wx event object
         :return:
         """
         player_id = evt.Int
         new_details_txt = self.info_text[player_id]
-
         self.detail_text.SetLabel(new_details_txt)
         self.Layout()
+
+    def save_button_clicked(self, evt):
+        """
+        Action when the 'save' button is clicked
+        :param evt: The wx event object
+        :return:
+        """
+        print("Save clicked")
+
+    def cancel_button_clicked(selfself, evt):
+        """
+        Action when the 'cancel' button is clicked
+        :param evt: The wx event object
+        :return:
+        """
+        print("Cancel clicked")
