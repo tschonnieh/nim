@@ -1,12 +1,12 @@
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
-from nim.Event import *
-from nim.ui.settings.SelectGamesizePanel import *
-from nim.ui.settings.SelectPlayerPanel import *
+from Event import *
+from ui.settings.SelectGamesizePanel import *
+from ui.settings.SelectPlayerPanel import *
 
-import nim.ui.res.values.colors as COLORS
-import nim.ui.res.values.fonts as FONTS
+import ui.res.values.colors as COLORS
+import ui.res.values.fonts as FONTS
 
 
 class SettingsPanel(ScrolledPanel):

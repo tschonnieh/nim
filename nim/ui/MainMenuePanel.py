@@ -1,11 +1,11 @@
 import wx
 
-from nim.Event import *
-import nim.ui.res.values.colors as col
-import nim.ui.res.values.fonts as FONTS
+from Event import *
+import ui.res.values.colors as col
+import ui.res.values.fonts as FONTS
 
-import nim.ui.res.values.colors as COLORS
-import nim.ui.res.values.fonts as FONTS
+import ui.res.values.colors as COLORS
+import ui.res.values.fonts as FONTS
 
 class MainMenuePanel(wx.Panel):
 
