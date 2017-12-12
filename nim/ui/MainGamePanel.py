@@ -19,9 +19,9 @@ class MainGamePanel(wx.Panel):
 
     def build_ui(self):
 
-        pearls_panel = self.create_pearls_panel([3, 2, 1])
+        pearls_panel = self.create_pearls_panel([5, 3, 2])
 
-        pearls_panel.Bind(wx.EVT_BUTTON, self.btn_clicked)
+        pearls_panel.Bind(wx.EVT_TOGGLEBUTTON, self.on_pearl_clicked)
 
         # Create bottom area
         buttons_panel = wx.Panel(self)
@@ -37,7 +37,7 @@ class MainGamePanel(wx.Panel):
 
         # Set the positions of the 'pearls'- and 'buttons'-panel
         main_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.Add(pearls_panel, wx.EXPAND)
+        main_sizer.Add(pearls_panel, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(buttons_panel, 0, wx.ALL | wx.CENTER, 10)
         self.SetSizer(main_sizer)
 
@@ -49,43 +49,46 @@ class MainGamePanel(wx.Panel):
         pearls_panel = wx.Panel(self)
         btn_size = (35, 35)
 
-        # First row
-        pearl11 = SButton(pearls_panel, label="", size=btn_size)
-        pearl12 = SButton(pearls_panel, label="", size=btn_size)
-        pearl13 = SButton(pearls_panel, label="", size=btn_size)
+        self.pearls_per_row = []
 
-        pearls_row1 = wx.BoxSizer(wx.HORIZONTAL)
-        pearls_row1.Add(pearl11, proportion=0, flag=wx.ALIGN_LEFT, border=0)
-        pearls_row1.AddSpacer(5)
-        pearls_row1.Add(pearl12, proportion=0, flag=wx.ALIGN_LEFT, border=0)
-        pearls_row1.AddSpacer(5)
-        pearls_row1.Add(pearl13, proportion=0, flag=wx.ALIGN_LEFT, border=0)
-
-        # Second row
-        pearl21 = SButton(pearls_panel, label="", size=btn_size)
-        pearl22 = SButton(pearls_panel, label="", size=btn_size)
-
-        pearls_row2 = wx.BoxSizer(wx.HORIZONTAL)
-        pearls_row2.Add(pearl21, proportion=0, flag=wx.ALIGN_LEFT, border=0)
-        pearls_row2.AddSpacer(5)
-        pearls_row2.Add(pearl22, proportion=0, flag=wx.ALIGN_LEFT, border=0)
-
-        # Third row
-        pearl31 = SButton(pearls_panel, label="", size=btn_size)
-
-        pearls_row3 = wx.BoxSizer(wx.HORIZONTAL)
-        pearls_row3.Add(pearl31, proportion=0, flag=wx.ALIGN_LEFT, border=0)
-
-        # Align all pearl rows vertical
         rows_sizer = wx.BoxSizer(wx.VERTICAL)
-        rows_sizer.Add(pearls_row1)
-        rows_sizer.AddSpacer(3)
-        rows_sizer.Add(pearls_row2)
-        rows_sizer.AddSpacer(3)
-        rows_sizer.Add(pearls_row3)
+
+        # All rows
+        for row_size in row_sizes:
+            row_btns = []
+            hor_row_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+            # Create the buttons for the row
+            for btn_id in range(row_size):
+                btn = wx.ToggleButton(pearls_panel, size=btn_size)
+                btn.SetBackgroundColour("black")
+                row_btns.append(btn)
+                hor_row_sizer.Add(btn, proportion=0, flag=wx.ALIGN_LEFT, border=0)
+
+                # Add space between buttons
+                if btn_id != row_size - 1:
+                    hor_row_sizer.AddSpacer(5)
+
+            # Add row buttons o list containing all rows
+            self.pearls_per_row.append(row_btns)
+
+            # Add the row to the vertical layout
+            rows_sizer.Add(hor_row_sizer)
+            rows_sizer.AddSpacer(5)
+
         pearls_panel.SetSizer(rows_sizer)
 
         return pearls_panel
 
-    def btn_clicked(self, evt):
-        print(evt)
+    def on_pearl_clicked(self, evt):
+        """
+        FUnction called when a button is toggled
+        :param evt:
+        :return:
+        """
+        clicked_btn = evt.EventObject
+        if clicked_btn.GetBackgroundColour().RGB == 0:
+            clicked_btn.SetBackgroundColour("white")
+        else:
+            clicked_btn.SetBackgroundColour("black")
+        self.Layout()
