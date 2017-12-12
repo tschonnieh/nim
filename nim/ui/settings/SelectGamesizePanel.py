@@ -1,8 +1,8 @@
 import wx
-from nim.Event import *
+from Event import *
 
-import nim.ui.res.values.colors as COLORS
-import nim.ui.res.values.fonts as FONTS
+import ui.res.values.colors as COLORS
+import ui.res.values.fonts as FONTS
 
 
 class SelectGamesizePanel(wx.Panel):
@@ -32,9 +32,9 @@ class SelectGamesizePanel(wx.Panel):
         # Create radio buttons
         radio_btn_1 = wx.RadioButton(content_panel, label='Small (3-2-1)', style=wx.RB_GROUP)
         radio_btn_1.SetFont(FONTS.TXT_NORMAL)
-        radio_btn_2 = wx.RadioButton(content_panel, label='Normal (4-3-2)', style=wx.RB_GROUP)
+        radio_btn_2 = wx.RadioButton(content_panel, label='Normal (4-3-2)')
         radio_btn_2.SetFont(FONTS.TXT_NORMAL)
-        radio_btn_3 = wx.RadioButton(content_panel, label='Large (5-4-3)', style=wx.RB_GROUP)
+        radio_btn_3 = wx.RadioButton(content_panel, label='Large (5-4-3)')
         radio_btn_3.SetFont(FONTS.TXT_NORMAL)
 
         # Add radio buttons to content_box_sizer

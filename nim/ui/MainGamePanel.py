@@ -1,9 +1,10 @@
-from wx import *
+import wx
+from wx.lib.agw.shapedbutton import SButton, SBitmapButton
 
-import nim.ui.res.values.colors as col
+import ui.res.values.colors as col
 
 
-class MainGamePanel(Panel):
+class MainGamePanel(wx.Panel):
 
     def __init__(self, parent, **args):
         super(MainGamePanel, self).__init__(parent)
@@ -14,9 +15,23 @@ class MainGamePanel(Panel):
 
         # Init the ui elements
         self.build_ui(parent)
+        self.Layout()
 
     def build_ui(self, parent):
-        p_demo = StaticText(parent=self, style=ALIGN_CENTRE)
-        p_demo.SetLabel("Implementation of 'MainGamePanel' is missing ;)")
-        p_demo.SetSize((300, -1))
-        p_demo.SetPosition((10, 10))
+
+        pearls_panel = wx.Panel(self, size=(300, 300), pos=(100, 100))
+
+        pearl1 = SButton(pearls_panel, label="O", size=(30, 30))
+        pearl2 = SButton(pearls_panel, label="O", size=(30, 30))
+        pearl3 = SButton(pearls_panel, label="O", size=(30, 30))
+
+        grid_sizer = wx.GridSizer(rows=3, cols=3, hgap=5, vgap=5)
+
+        grid_sizer.Add(pearl1)
+        grid_sizer.Add(pearl2)
+        grid_sizer.Add(pearl3)
+
+        #vsizer = wx.BoxSizer(wx.VERTICAL)
+        #vsizer.Add(demo_btn, 0)
+        #vsizer.Add(draw_panel, 1, wx.EXPAND)
+        pearls_panel.SetSizer(grid_sizer)

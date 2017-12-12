@@ -1,8 +1,8 @@
 import wx
-from nim.Event import *
+from Event import *
 
-import nim.ui.res.values.colors as COLORS
-import nim.ui.res.values.fonts as FONTS
+import ui.res.values.colors as COLORS
+import ui.res.values.fonts as FONTS
 
 
 class SelectPlayerPanel(wx.Panel):
@@ -44,7 +44,7 @@ class SelectPlayerPanel(wx.Panel):
         details_box = wx.StaticBox(details_panel, label='Details')
         details_box.SetFont(FONTS.TXT_BIG)
         details_bsizer = wx.StaticBoxSizer(details_box, orient=wx.VERTICAL)
-        self.detail_text = wx.StaticText(details_box, label="Description of the player ...", style=wx.TE_MULTILINE)
+        self.detail_text = wx.StaticText(details_box, label="Player description", style=wx.TE_MULTILINE)
         self.detail_text.SetFont(FONTS.TXT_NORMAL)
         details_bsizer.Add(self.detail_text)
         details_panel.SetSizer(details_bsizer)

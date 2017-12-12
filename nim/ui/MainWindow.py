@@ -1,11 +1,11 @@
 import wx
 
-from nim.ui.MainGamePanel import MainGamePanel
-from nim.ui.MainMenuePanel import MainMenuePanel
-from nim.ui.settings.SettingsPanel import SettingsPanel
+from ui.MainGamePanel import MainGamePanel
+from ui.MainMenuePanel import MainMenuePanel
+from ui.settings.SettingsPanel import SettingsPanel
 
-import nim.ui.res.values.colors as COLORS
-import nim.ui.res.values.fonts as FONTS
+import ui.res.values.colors as COLORS
+import ui.res.values.fonts as FONTS
 
 class MainWindow:
     """ The main window of the nim UI. Contains the 'frame' object of wxpython """
@@ -25,6 +25,7 @@ class MainWindow:
         self.create_main_panels()
 
         self.show_main_menue()
+        self.frame.Centre()
         self.frame.Show()
 
     def create_main_panels(self):
