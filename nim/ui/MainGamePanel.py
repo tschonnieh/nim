@@ -1,3 +1,5 @@
+from typing import List
+
 import wx
 from wx.lib.agw.shapedbutton import SButton, SBitmapButton
 
@@ -9,17 +11,25 @@ class MainGamePanel(wx.Panel):
     def __init__(self, parent, **args):
         super(MainGamePanel, self).__init__(parent)
 
+    def build_game(self,):
         # Set MainMenuePanel color and to fullscreen
         self.SetBackgroundColour(col.MAIN_MENUE_BG)
-        self.SetSize(parent.Size)
+        self.SetSize(self.Parent.Size)
+
+        # get the gamesize from the config
+        self.config = wx.Config("NimGame")
+        cur_size_str = self.config.Read("gamesize", "[3, 2, 1]")
+        cur_size = cur_size_str.strip('[]').split(', ')
+        cur_size = list(map(int, cur_size))
+        print("Initialising game with size {}".format(cur_size))
 
         # Init the ui elements
-        self.build_ui()
+        self.build_ui(cur_size)
         self.Layout()
 
-    def build_ui(self):
+    def build_ui(self, gamesize: List):
 
-        pearls_panel = self.create_pearls_panel([5, 3, 2])
+        pearls_panel = self.create_pearls_panel(gamesize)
 
         pearls_panel.Bind(wx.EVT_TOGGLEBUTTON, self.on_pearl_clicked)
 
@@ -73,7 +83,7 @@ class MainGamePanel(wx.Panel):
             self.pearls_per_row.append(row_btns)
 
             # Add the row to the vertical layout
-            rows_sizer.Add(hor_row_sizer)
+            rows_sizer.Add(hor_row_sizer, 0, wx.CENTER)
             rows_sizer.AddSpacer(5)
 
         pearls_panel.SetSizer(rows_sizer)
@@ -91,4 +101,18 @@ class MainGamePanel(wx.Panel):
             clicked_btn.SetBackgroundColour("white")
         else:
             clicked_btn.SetBackgroundColour("black")
+
+        print(self.get_pearls_pos(clicked_btn))
         self.Layout()
+
+    def get_pearls_pos(self, clicked_btn):
+        """
+        Gets the col- and row- id of a clicked button
+        :param clicked_btn: THe button which was clicked by the user
+        :return: A tuple containing the column- and row id of the clicked button. e.g. (0, 1)
+        """
+        for (row_id, buttons) in enumerate(self.pearls_per_row):
+            for (col_id, btn) in enumerate(buttons):
+                if clicked_btn == btn:
+                    return row_id, col_id
+
