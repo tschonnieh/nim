@@ -1,12 +1,15 @@
 from typing import List
-
 import wx
-from wx.lib.agw.shapedbutton import SButton, SBitmapButton
 
+from PlayerDict import ALL_PLAYERS
 import ui.res.values.colors as col
 
 
 class MainGamePanel(wx.Panel):
+    """
+    The panel containing the main game.
+    It shows multiple rows of pearls
+    """
 
     def __init__(self, parent, **args):
         super(MainGamePanel, self).__init__(parent)
@@ -16,12 +19,17 @@ class MainGamePanel(wx.Panel):
         self.SetBackgroundColour(col.MAIN_MENUE_BG)
         self.SetSize(self.Parent.Size)
 
-        # get the gamesize from the config
+        # Read the gamesize and playertypes from the config
         self.config = wx.Config("NimGame")
         cur_size_str = self.config.Read("gamesize", "[3, 2, 1]")
         cur_size = cur_size_str.strip('[]').split(', ')
         cur_size = list(map(int, cur_size))
-        print("Initialising game with size {}".format(cur_size))
+        player1_id = self.config.ReadInt("player0", 0)
+        player2_id = self.config.ReadInt("player1", 1)
+        print("Initialising game with the following settings:")
+        print("\tgamesize: {}".format(cur_size))
+        print("\tplayer1: {} - '{}'".format(player1_id, ALL_PLAYERS[player1_id].name))
+        print("\tplayer2: {} - '{}'".format(player2_id, ALL_PLAYERS[player2_id].name))
 
         # Init the ui elements
         self.build_ui(cur_size)

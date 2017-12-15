@@ -45,10 +45,10 @@ class SettingsPanel(ScrolledPanel):
         self.select_gamesize_panel = SelectGamesizePanel(self)
         self.right_panels.append(self.select_gamesize_panel)
 
-        self.select_player1_panel = SelectPlayerPanel(self)
+        self.select_player1_panel = SelectPlayerPanel(self, 0)
         self.right_panels.append(self.select_player1_panel)
 
-        self.select_player2_panel = SelectPlayerPanel(self)
+        self.select_player2_panel = SelectPlayerPanel(self, 1)
         self.right_panels.append(self.select_player2_panel)
 
         for panel in self.right_panels:

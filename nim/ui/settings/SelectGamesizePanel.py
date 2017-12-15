@@ -7,8 +7,11 @@ import ui.res.values.fonts as FONTS
 
 
 class SelectGamesizePanel(wx.Panel):
+    """
+    The panel allows the user to select the size of the game
+    """
 
-    def __init__(self, parent, **args):
+    def __init__(self, parent):
         super(SelectGamesizePanel, self).__init__(parent)
 
         self.SetBackgroundColour(COLORS.SETTINGS_DETAILS_BG)
