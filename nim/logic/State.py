@@ -5,7 +5,8 @@ class State:
 
     def __init__(self, rows : List):
         """
-        rows are a list of np.array
+        Constructor of a State
+        :param rows: the pearl rows as np.array with 1's and 0's
         """
         self.Rows = rows
 
@@ -20,7 +21,7 @@ class State:
 
         return State(rows)
 
-    def to_binary_reprasentation(self):
+    def to_binary_representation(self):
         """
         returns the binary state of the given state
         """
