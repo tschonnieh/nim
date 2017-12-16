@@ -1,17 +1,35 @@
 import wx
-from Event import *
+import pickle
 
+from Event import *
 import ui.res.values.colors as COLORS
 import ui.res.values.fonts as FONTS
 
 
 class SelectGamesizePanel(wx.Panel):
+    """
+    The panel allows the user to select the size of the game
+    """
 
-    def __init__(self, parent, **args):
+    def __init__(self, parent):
         super(SelectGamesizePanel, self).__init__(parent)
 
         self.SetBackgroundColour(COLORS.SETTINGS_DETAILS_BG)
         self.SetSize(parent.Size)
+
+        self.button_sizes = [[3, 2, 1], [4, 3, 2], [5, 4, 3], [6, 5, 4], [7, 6, 5]]
+        self.selected_rbutton_id = 0
+
+        # Restore last config if set
+        self.config = wx.Config("NimGame")
+        cur_size_str = self.config.Read("gamesize", "[3, 2, 1]")
+        cur_size = cur_size_str.strip('[]').split(', ')
+        cur_size = list(map(int, cur_size))
+
+        for (i, btn_size) in enumerate(self.button_sizes):
+            if btn_size == cur_size:
+                self.selected_rbutton_id = i
+                break
 
         # The events
         self.evt_back = Event()
@@ -30,30 +48,27 @@ class SelectGamesizePanel(wx.Panel):
         content_vbox_sizer = wx.StaticBoxSizer(content_box, orient=wx.VERTICAL)
 
         # Create radio buttons
-        radio_btn_1 = wx.RadioButton(content_panel, label='Small (3-2-1)', style=wx.RB_GROUP)
-        radio_btn_1.SetFont(FONTS.TXT_NORMAL)
-        radio_btn_2 = wx.RadioButton(content_panel, label='Normal (4-3-2)')
-        radio_btn_2.SetFont(FONTS.TXT_NORMAL)
-        radio_btn_3 = wx.RadioButton(content_panel, label='Large (5-4-3)')
-        radio_btn_3.SetFont(FONTS.TXT_NORMAL)
+        self.radio_buttons = []
+        for btn_size in self.button_sizes:
+            radio_btn = wx.RadioButton(content_panel, label=str(btn_size))
+            radio_btn.SetFont(FONTS.TXT_NORMAL)
+            self.radio_buttons.append(radio_btn)
 
         # Add radio buttons to content_box_sizer
-        content_vbox_sizer.Add(radio_btn_1, 0, wx.LEFT, 5)
-        content_vbox_sizer.AddSpacer(3)
-        content_vbox_sizer.Add(radio_btn_2, 0, wx.LEFT, 5)
-        content_vbox_sizer.AddSpacer(3)
-        content_vbox_sizer.Add(radio_btn_3, 0, wx.LEFT, 5)
-        content_vbox_sizer.AddSpacer(3)
+        for radio_btn in self.radio_buttons:
+            content_vbox_sizer.Add(radio_btn, 0, wx.LEFT, 5)
+            content_vbox_sizer.AddSpacer(3)
         content_panel.SetSizer(content_vbox_sizer)
 
         # Create the radio button for a custom gamesize
         custom_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         radio_btn_custom = wx.RadioButton(content_panel, label='Custom')
         radio_btn_custom.SetFont(FONTS.TXT_NORMAL)
+        self.radio_buttons.append(radio_btn_custom)
         txt_ctrl_custom = wx.TextCtrl(content_panel)
         txt_ctrl_custom.SetFont(FONTS.TXT_NORMAL)
         custom_button_sizer.Add(radio_btn_custom)
-        custom_button_sizer.Add(txt_ctrl_custom, flag = wx.LEFT, border = 5)
+        custom_button_sizer.Add(txt_ctrl_custom, flag=wx.LEFT, border=5)
         content_vbox_sizer.Add(custom_button_sizer, 0, wx.LEFT, 5)
 
         # Aligns butttons horizontal
@@ -72,6 +87,8 @@ class SelectGamesizePanel(wx.Panel):
         vertical_box.AddStretchSpacer(1)
         vertical_box.Add(button_sizer, 0, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
 
+        self.radio_buttons[self.selected_rbutton_id].SetValue(True)
+
         self.SetSizerAndFit(vertical_box)
 
     def save_button_clicked(self, evt):
@@ -80,7 +97,18 @@ class SelectGamesizePanel(wx.Panel):
         :param evt: The wx event object
         :return:
         """
-        print("Save clicked")
+        # If custom size button is clicked
+        if self.radio_buttons[len(self.radio_buttons) - 1].GetValue() == True:
+            print("Custom size not implemented")
+            return
+
+        # If button with predefined size is clicked
+        for (i, btn) in enumerate(self.radio_buttons):
+            if btn.GetValue() == True:
+                selected_size = self.button_sizes[i]
+                print("Save size {}".format(selected_size))
+                self.config.Write("gamesize", str(selected_size))
+                self.config.Flush()
 
     def cancel_button_clicked(selfself, evt):
         """

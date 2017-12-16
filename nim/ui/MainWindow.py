@@ -65,7 +65,9 @@ class MainWindow:
 
     def start_game(self):
         """ Shows the main game panel and hides all other panels """
+        self.main_game_panel.build_game()
         self.show_panel(self.main_game_panel)
+
 
     def show_settings(self):
         """ Shows the settings panel and hides all other panels """
