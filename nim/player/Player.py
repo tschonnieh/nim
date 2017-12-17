@@ -8,8 +8,9 @@ class Player:
         class MyPlayer(Player):
     """
 
-    def __init__(self, player_type : PlayerType):
+    def __init__(self, player_type: PlayerType, player_name):
         self.PlayerType = player_type
+        self.name = player_name
 
     def step(self, actual_state : State):
         """

@@ -21,6 +21,29 @@ class State:
 
         return State(rows)
 
+    def __eq__(self, other_state):
+        """
+        Checks if to states are the same (contains the same state information)
+        :param other_state: The other state to compare with
+        :return: True, if the 'other_state' has the same state than this state. Otherwise False
+        """
+        for (row_id, row) in enumerate(self.Rows):
+            if not np.array_equal(row, other_state.Rows[row_id]):
+                return False
+        return True
+
+    def toggle_pearl(self, row_id, col_id):
+        """
+        Toggles the status of a single pearl in the state
+        :param row_id: The row number of the pearl to toggle
+        :param col_id: The column number of the pearl to toggle
+        :return:
+        """
+        if self.Rows[row_id][col_id] == 0:
+            self.Rows[row_id][col_id] = 1
+        else:
+            self.Rows[row_id][col_id] = 0
+
     def to_binary_representation(self):
         """
         returns the binary state of the given state

@@ -71,6 +71,7 @@ class SettingsPanel(ScrolledPanel):
             wx.Panel -- The menue panel, completly constructed with all child elemnts
         """
         left_panel = wx.Panel(self)
+        left_panel.SetBackgroundColour(COLORS.SETTING_MENUE_BG)
 
         # The ui elements of the left panel
         title = wx.StaticText(left_panel, label="Settings")

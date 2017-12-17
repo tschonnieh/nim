@@ -4,6 +4,11 @@ import wx
 from PlayerDict import ALL_PLAYERS
 import ui.res.values.colors as col
 
+from nim.Controller import Controller
+from nim.logic.GameLogic import GameLogic
+from nim.logic.State import State
+from nim.player.ManualPlayer import ManualPlayer
+
 
 class MainGamePanel(wx.Panel):
     """
@@ -14,7 +19,7 @@ class MainGamePanel(wx.Panel):
     def __init__(self, parent, **args):
         super(MainGamePanel, self).__init__(parent)
 
-    def build_game(self,):
+    def build_game(self):
         # Set MainMenuePanel color and to fullscreen
         self.SetBackgroundColour(col.MAIN_MENUE_BG)
         self.SetSize(self.Parent.Size)
@@ -24,16 +29,29 @@ class MainGamePanel(wx.Panel):
         cur_size_str = self.config.Read("gamesize", "[3, 2, 1]")
         cur_size = cur_size_str.strip('[]').split(', ')
         cur_size = list(map(int, cur_size))
-        player1_id = self.config.ReadInt("player0", 0)
-        player2_id = self.config.ReadInt("player1", 1)
+        player1_type_id = self.config.ReadInt("player0", 0)
+        player2_type_id = self.config.ReadInt("player1", 1)
         print("Initialising game with the following settings:")
         print("\tgamesize: {}".format(cur_size))
-        print("\tplayer1: {} - '{}'".format(player1_id, ALL_PLAYERS[player1_id].name))
-        print("\tplayer2: {} - '{}'".format(player2_id, ALL_PLAYERS[player2_id].name))
+        print("\tplayer1: {} - '{}'".format(player1_type_id, ALL_PLAYERS[player1_type_id].name))
+        print("\tplayer2: {} - '{}'".format(player2_type_id, ALL_PLAYERS[player2_type_id].name))
+
+        # Create players and game controller
+        self.player1 = ManualPlayer("Player 1")
+        self.player2 = ManualPlayer("Player 2")
+        self.last_state = State.get_start_state(cur_size)
+        self.cur_state = State.get_start_state(cur_size)
 
         # Init the ui elements
         self.build_ui(cur_size)
+
+        # Draws the initial state
+        self.draw_new_state(self.cur_state)
+
         self.Layout()
+
+        # start the game logic
+        # self.controller = Controller.start_game(self.cur_state, self.player1, self.player2)
 
     def build_ui(self, gamesize: List):
 
@@ -45,6 +63,10 @@ class MainGamePanel(wx.Panel):
         buttons_panel = wx.Panel(self)
         btn_turn = wx.Button(buttons_panel, label='make turn')
         btn_reset = wx.Button(buttons_panel, label='reset')
+
+        # Add events to buttons
+        btn_turn.Bind(wx.EVT_BUTTON, self.turn_button_pressed)
+        btn_reset.Bind(wx.EVT_BUTTON, self.reset_button_pressed)
 
         # Adjust buttons horizontal
         btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -79,7 +101,6 @@ class MainGamePanel(wx.Panel):
             # Create the buttons for the row
             for btn_id in range(row_size):
                 btn = wx.ToggleButton(pearls_panel, size=btn_size)
-                btn.SetBackgroundColour("black")
                 row_btns.append(btn)
                 hor_row_sizer.Add(btn, proportion=0, flag=wx.ALIGN_LEFT, border=0)
 
@@ -100,18 +121,26 @@ class MainGamePanel(wx.Panel):
 
     def on_pearl_clicked(self, evt):
         """
-        FUnction called when a button is toggled
+        Function called when a button is toggled
         :param evt:
         :return:
         """
         clicked_btn = evt.EventObject
-        if clicked_btn.GetBackgroundColour().RGB == 0:
-            clicked_btn.SetBackgroundColour("white")
-        else:
-            clicked_btn.SetBackgroundColour("black")
+        clicked_pos = self.get_pearls_pos(clicked_btn)
 
-        print(self.get_pearls_pos(clicked_btn))
-        self.Layout()
+        # toggle the state
+        self.cur_state.toggle_pearl(clicked_pos[0], clicked_pos[1])
+
+        # Check if action is valid or the last state (no changes)
+        action_valid = GameLogic.is_valid(self.last_state, self.cur_state)
+        is_last_state = self.cur_state == self.last_state
+
+        if action_valid or is_last_state:
+            # If UI action is okay, draw the state change
+            self.draw_new_state(self.cur_state)
+        else:
+            # Reset state if action is not allowed
+            self.cur_state.toggle_pearl(clicked_pos[0], clicked_pos[1])
 
     def get_pearls_pos(self, clicked_btn):
         """
@@ -124,3 +153,18 @@ class MainGamePanel(wx.Panel):
                 if clicked_btn == btn:
                     return row_id, col_id
 
+    def draw_new_state(self, new_state):
+        for (row_id, buttons) in enumerate(self.pearls_per_row):
+            for (col_id, btn) in enumerate(buttons):
+                pearl_state = new_state.Rows[row_id][col_id]
+
+                if pearl_state == 0:
+                    btn.SetBackgroundColour("white")
+                else:
+                    btn.SetBackgroundColour("black")
+
+    def turn_button_pressed(self, evt):
+        print("turn_button_pressed")
+
+    def reset_button_pressed(self, evt):
+        print("reset_button_pressed")

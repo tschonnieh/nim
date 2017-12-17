@@ -12,5 +12,7 @@ MAIN_MENUE_BTN = wx.Colour(190, 190, 215)
 # The button background color in the settings
 SETTINGS_BTN = wx.Colour(190, 190, 215)
 
+SETTING_MENUE_BG = wx.Colour(210, 210, 235)
+
 # The background color of the details panel in the settings menue
 SETTINGS_DETAILS_BG = "#e8e8e8"
