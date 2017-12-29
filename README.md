@@ -10,8 +10,15 @@ e.G. "python startGame.py"
 - wxpython
 - pillow
 - numpy
+- random
 
 ## How to install with anaconda
 - conda install wxpython -c conda-forge
 - conda install pillow -c conda-forge
 - conda install numpy
+
+## How to install with pip
+- pip install wxpython
+- pip install pillow
+- pip install numpy
+- pip install random
