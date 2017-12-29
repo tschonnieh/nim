@@ -1,5 +1,5 @@
-from nim.player import Player
-from nim.logic import State
+from nim.player.Player import Player
+from nim.logic.State import State
 from nim.PlayerDict import PERFECT_KI_PLAYER
 
 class PerfectPlayer(Player):
