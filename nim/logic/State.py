@@ -50,9 +50,9 @@ class State:
         """
         nr_of_pearls_per_row = []
         for row in self.Rows:
-            nr_of_pearls_per_row.append(np.sum(row))
+            nr_of_pearls_per_row.append(int(np.sum(row)))
 
-        max_nr_of_pearls = max(nr_of_pearls_per_row)
+        max_nr_of_pearls = int(max(nr_of_pearls_per_row))
         max_length_of_binary = len("{0:b}".format(max_nr_of_pearls))
 
         binary_rows = []
