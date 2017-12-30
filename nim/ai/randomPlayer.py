@@ -2,7 +2,6 @@ from nim.player.Player import Player
 from nim.logic.State import State
 from nim.PlayerDict import RANDOM_KI_PLAYER
 from random import randint
-import numpy as np
 
 #test_nim_array = ([1.0, 0.0, 1.0], [1.0, 0.0], [0.0])
 #test_state = State(test_nim_array)
@@ -16,7 +15,7 @@ class RandomPlayer(Player):
         """
         toggle random pearls of the actual given state (only in one row, so the step is valid)
         :param actual_state: actual state as a list of rows which contain float ones or float zeros
-        :return: if the random turn is done, return next state
+        :return: returns next state
         """
         next_state = actual_state
         idx_list = self.pick_random_pearls(next_state)
