@@ -67,9 +67,49 @@ class State:
 
         return State(binary_rows)
 
+    @classmethod
+    def from_flat_representation(cls, perlsPerRow, qState):
+        """
+        Init state from flat representation and perlsPerRow
+        """
+        gameState = []
 
+        for row in range(0, len(perlsPerRow)):
+            gameStateRow = np.zeros(perlsPerRow[row])
 
+            for perl in range(0, perlsPerRow[row]):
+                if qState % 2:
+                    gameStateRow[perl] = 1
 
+                qState = np.right_shift(qState, 1)
 
+            gameState.append(gameStateRow)
+        
+        return cls(gameState)
 
+    def to_flat_representation(self):
+        """
+        returns the flat representation of the given state
+        """
+        qState = np.uint32(0)
+        idx = 0
 
+        for row in self.Rows:
+            for pearl in row:
+                if pearl:
+                    qState = np.bitwise_or( qState, np.left_shift(1, idx) )
+
+                idx += 1
+
+        return qState
+
+    def get_structure(self):
+        """
+        returns the structure of the state -> how many rows and how many pearls per row
+        """
+        pearls_per_row = []
+
+        for row in self.Rows:
+            pearls_per_row.append( len(row) )
+
+        return pearls_per_row
