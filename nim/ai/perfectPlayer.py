@@ -5,7 +5,7 @@ import numpy as np
 from random import randint
 import copy
 
-#test_nim_array = ([0, 0, 0], [1.0, 1.0, 0], [0, 0, 0])
+#test_nim_array = ([1.0, 1.0, 0], [1.0, 0, 0], [0, 0, 0])
 #test_state = State(test_nim_array)
 
 class PerfectPlayer(Player):
@@ -96,14 +96,23 @@ class PerfectPlayer(Player):
         bin_state = actual_state.to_binary_representation()
         binNimArray = np.array(bin_state.Rows)
         sumRow = np.sum(binNimArray, axis=0)
+        #print(sumRow)
         check = 0
         for val in sumRow:
             if(val != 0):
                 if(val % 2 != 0 and sum(sumRow) == 1 and sumRow[-1] == 1):
-                    continue
+                    return True
+                elif(sum(sumRow[0:-1]) == 0):
+                    if(sumRow[-1] % 2 == 1):
+                        return True
+                    else:
+                        return False
                 else:
                     check += val % 2
         if check == 0:
             return True
         else:
             return False
+
+#player = PerfectPlayer("test")
+#player.step(test_state)
