@@ -1,6 +1,6 @@
-from nim.player.Player import Player
-from nim.logic.State import State
-from nim.logic.GameLogic import GameLogic
+from player.Player import Player
+from logic.State import State
+from logic.GameLogic import GameLogic
 
 
 class Controller:

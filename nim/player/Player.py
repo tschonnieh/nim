@@ -1,5 +1,5 @@
-from nim.PlayerDict import PlayerType
-from nim.logic.State import State
+from PlayerDict import PlayerType
+from logic.State import State
 
 class Player:
     """

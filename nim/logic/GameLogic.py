@@ -1,4 +1,4 @@
-from nim.logic.State import State
+from logic.State import State
 import numpy as np
 
 class GameLogic:

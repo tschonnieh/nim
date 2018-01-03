@@ -1,6 +1,6 @@
-from nim.PlayerDict import MANUAL_PLAYER
-from nim.logic.State import State
-from nim.player.Player import Player
+from PlayerDict import MANUAL_PLAYER
+from logic.State import State
+from player.Player import Player
 
 
 class ManualPlayer(Player):

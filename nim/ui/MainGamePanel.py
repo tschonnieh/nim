@@ -4,10 +4,10 @@ import wx
 from PlayerDict import ALL_PLAYERS
 import ui.res.values.colors as col
 
-from nim.Controller import Controller
-from nim.logic.GameLogic import GameLogic
-from nim.logic.State import State
-from nim.player.ManualPlayer import ManualPlayer
+from Controller import Controller
+from logic.GameLogic import GameLogic
+from logic.State import State
+from player.ManualPlayer import ManualPlayer
 
 
 class MainGamePanel(wx.Panel):

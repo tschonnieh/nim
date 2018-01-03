@@ -1,6 +1,6 @@
-from nim.player.Player import Player
-from nim.logic.State import State
-from nim.PlayerDict import PERFECT_KI_PLAYER
+from player.Player import Player
+from logic.State import State
+from PlayerDict import PERFECT_KI_PLAYER
 import numpy as np
 from random import randint
 import copy
