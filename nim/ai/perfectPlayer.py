@@ -93,16 +93,16 @@ class PerfectPlayer(Player):
         :param actual_state: actual state as a list of rows which contain float ones or float zeros
         :return: returns True, if it is a winning state and False, if it is not
         """
-        sumRow = []
         bin_state = actual_state.to_binary_representation()
         binNimArray = np.array(bin_state.Rows)
-        transposedArray = binNimArray.transpose()
-        for x in transposedArray:
-            sumRow.append(sum(x))
+        sumRow = np.sum(binNimArray, axis=0)
         check = 0
         for val in sumRow:
-            if(val != 0 and sum(sumRow) != 1):
-                check += val % 2
+            if(val != 0):
+                if(val % 2 != 0 and sum(sumRow) == 1 and sumRow[-1] == 1):
+                    continue
+                else:
+                    check += val % 2
         if check == 0:
             return True
         else:
