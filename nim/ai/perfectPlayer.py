@@ -5,7 +5,7 @@ import numpy as np
 from random import randint
 import copy
 
-#test_nim_array = ([1.0, 1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0], [0, 0, 1.0])
+#test_nim_array = ([0, 0, 0], [1.0, 1.0, 0], [0, 0, 0])
 #test_state = State(test_nim_array)
 
 class PerfectPlayer(Player):
@@ -101,7 +101,7 @@ class PerfectPlayer(Player):
             sumRow.append(sum(x))
         check = 0
         for val in sumRow:
-            if(val != 0):
+            if(val != 0 and sum(sumRow) != 1):
                 check += val % 2
         if check == 0:
             return True
