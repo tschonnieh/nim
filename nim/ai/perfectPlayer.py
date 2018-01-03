@@ -37,7 +37,7 @@ class PerfectPlayer(Player):
         idx_list = self.get_idx_list_of_ones(actual_state.Rows[rand_row])
         actual_state.toggle_pearl(rand_row, idx_list[0])
         next_state = actual_state
-        print(next_state.Rows)
+        #print(next_state.Rows)
         return next_state
 
     def pick_random_row(self, actual_state : State):
@@ -69,7 +69,7 @@ class PerfectPlayer(Player):
             for idx in idx_list:
                 next_state.toggle_pearl(row_id, idx)
                 if(self.is_winning_state(next_state)):
-                    print(next_state.Rows)
+                    #print(next_state.Rows)
                     return next_state
         print("no perfect move possible")
         return actual_state
