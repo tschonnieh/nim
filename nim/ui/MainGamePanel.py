@@ -8,6 +8,7 @@ from Controller import Controller
 from logic.GameLogic import GameLogic
 from logic.State import State
 from player.ManualPlayer import ManualPlayer
+from player.Player import Player
 
 
 class MainGamePanel(wx.Panel):
@@ -37,8 +38,8 @@ class MainGamePanel(wx.Panel):
         print("\tplayer2: {} - '{}'".format(player2_type_id, ALL_PLAYERS[player2_type_id].name))
 
         # Create players and game controller
-        self.player1 = ManualPlayer("Player 1")
-        self.player2 = ManualPlayer("Player 2")
+        self.player1 = ManualPlayer("Player 1 - {}".format(ALL_PLAYERS[player1_type_id].name))
+        self.player2 = ManualPlayer("Player 2 - {}.format(ALL_PLAYERS[player2_type_id].name")
         self.last_state = State.get_start_state(cur_size)
         self.cur_state = State.get_start_state(cur_size)
 
@@ -47,6 +48,7 @@ class MainGamePanel(wx.Panel):
 
         # Draws the initial state
         self.draw_new_state(self.cur_state)
+        self.draw_player_name(self.player1)
 
         self.Layout()
 
@@ -58,6 +60,16 @@ class MainGamePanel(wx.Panel):
         pearls_panel = self.create_pearls_panel(gamesize)
 
         pearls_panel.Bind(wx.EVT_TOGGLEBUTTON, self.on_pearl_clicked)
+
+        # Create info area
+        info_panel = wx.Panel(self)
+        cur_player_label = wx.StaticText(info_panel, label="current player:")
+        self.cur_player = wx.StaticText(info_panel, label="Player XXX")
+        info_panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        info_panel_sizer.Add(cur_player_label, 1, wx.CENTER, 10)
+        info_panel_sizer.AddSpacer(5)
+        info_panel_sizer.Add(self.cur_player, 1, wx.CENTER, 10)
+        info_panel.SetSizer(info_panel_sizer)
 
         # Create bottom area
         buttons_panel = wx.Panel(self)
@@ -78,6 +90,7 @@ class MainGamePanel(wx.Panel):
         # Set the positions of the 'pearls'- and 'buttons'-panel
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         main_sizer.Add(pearls_panel, wx.EXPAND | wx.ALL, 5)
+        main_sizer.Add(info_panel, 0, wx.ALL | wx.CENTER, 5)
         main_sizer.Add(buttons_panel, 0, wx.ALL | wx.CENTER, 10)
         self.SetSizer(main_sizer)
 
@@ -162,6 +175,14 @@ class MainGamePanel(wx.Panel):
                     btn.SetBackgroundColour("white")
                 else:
                     btn.SetBackgroundColour("black")
+
+    def draw_player_name(self, player: Player):
+        """
+        Displays the name of the player which is on turn
+        :param player: The player which shall be displayed
+        :return: None
+        """
+        self.cur_player.SetLabel(player.name)
 
     def turn_button_pressed(self, evt):
         print("turn_button_pressed")
