@@ -1,4 +1,4 @@
-from PlayerDict import MANUAL_PLAYER
+from player.PlayerDict import MANUAL_PLAYER
 from logic.State import State
 from player.Player import Player
 

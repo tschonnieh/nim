@@ -1,7 +1,7 @@
 import wx
 
 from Event import *
-from PlayerDict import ALL_PLAYERS
+from player.PlayerDict import ALL_PLAYERS
 import ui.res.values.colors as COLORS
 import ui.res.values.fonts as FONTS
 

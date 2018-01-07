@@ -1,5 +1,5 @@
 from player.Player import Player
-from PlayerDict import QLEARN_KI_PLAYER
+from player.PlayerDict import QLEARN_KI_PLAYER
 from logic.State import State
 from q_learning.QLearner import QLearner
 

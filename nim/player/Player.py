@@ -1,5 +1,6 @@
-from PlayerDict import PlayerType
 from logic.State import State
+from player.PlayerDict import PlayerType
+
 
 class Player:
     """
@@ -12,7 +13,7 @@ class Player:
         self.PlayerType = player_type
         self.name = player_name
 
-    def step(self, actual_state : State):
+    def step(self, actual_state: State):
         """
         returns the next valid state
         """

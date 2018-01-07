@@ -1,15 +1,18 @@
 from typing import List
 
+import copy
 import wx
 
 import ui.res.values.colors as col
 from Controller import Controller
-from PlayerDict import ALL_PLAYERS, MANUAL_PLAYER
-from ai.randomPlayer import RandomPlayer
 from logic.GameLogic import GameLogic
 from logic.State import State
-from player.ManualPlayer import ManualPlayer
 from player.Player import Player
+from player.PlayerDict import ALL_PLAYERS, MANUAL_PLAYER
+from player.create_player_by_type_id import create_player_by_type_id
+
+import ui.res.values.fonts as FONTS
+import ui.res.values.colors as COLORS
 
 
 class MainGamePanel(wx.Panel):
@@ -39,26 +42,25 @@ class MainGamePanel(wx.Panel):
         print("\tplayer2: {} - '{}'".format(player2_type_id, ALL_PLAYERS[player2_type_id].name))
 
         # Create players and game controller
-        self.player1 = ManualPlayer("Player 1 ({})".format(ALL_PLAYERS[player1_type_id].name))
-        self.player2 = RandomPlayer("Player 2 ({})".format(ALL_PLAYERS[player2_type_id].name))
-        self.cur_player = self.player1
+        self.player1_name = "Player 1 ({})".format(ALL_PLAYERS[player1_type_id].name)
+        self.player2_name = "Player 2 ({})".format(ALL_PLAYERS[player2_type_id].name)
+        self.player1 = create_player_by_type_id(player1_type_id, self.player1_name)
+        self.player2 = create_player_by_type_id(player2_type_id, self.player2_name)
 
+        self.cur_player = self.player1
         self.last_state = State.get_start_state(cur_size)
         self.cur_state = State.get_start_state(cur_size)
+        self.controller = Controller()
+        self.controller.init_game(self.cur_state, self.player1, self.player2)
 
         # Init the ui elements
         self.build_ui(cur_size)
 
         # Draws the initial state
         self.draw_new_state(self.cur_state)
-        self.draw_player_name(self.player1)
+        self.show_active_player(self.player1)
 
         self.Layout()
-
-        # start the game logic
-        self.controller = Controller()
-        self.controller.init_game(self.cur_state, self.player1, self.player2)
-        self.has_won = False
 
     def build_ui(self, gamesize: List):
 
@@ -67,12 +69,14 @@ class MainGamePanel(wx.Panel):
 
         # Create info area
         info_panel = wx.Panel(self)
-        player_label = wx.StaticText(info_panel, label="current player:")
-        self.cur_player_label = wx.StaticText(info_panel, label="Player XXX")
+        self.player1_label = wx.StaticText(info_panel, label=self.player1_name)
+        self.player2_label = wx.StaticText(info_panel, label=self.player2_name)
+        self.player1_label.SetFont(FONTS.TXT_BIG)
+        self.player2_label.SetFont(FONTS.TXT_BIG)
         info_panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        info_panel_sizer.Add(player_label, 1, wx.CENTER, 10)
+        info_panel_sizer.Add(self.player1_label, 1, wx.TOP | wx.BOTTOM | wx.EXPAND | wx.ALIGN_CENTER, 15)
         info_panel_sizer.AddSpacer(5)
-        info_panel_sizer.Add(self.cur_player_label, 1, wx.CENTER, 10)
+        info_panel_sizer.Add(self.player2_label, 1, wx.TOP | wx.BOTTOM | wx.EXPAND | wx.ALIGN_CENTER, 15)
         info_panel.SetSizer(info_panel_sizer)
 
         # Create bottom area
@@ -143,7 +147,7 @@ class MainGamePanel(wx.Panel):
         :return:
         """
         # Allows changing the pearls only if manual player is playing
-        if self.cur_player.PlayerType.id != MANUAL_PLAYER.id or self.has_won:
+        if self.cur_player.PlayerType.id != MANUAL_PLAYER.id or self.controller.game_over:
             return False
 
         clicked_btn = evt.EventObject
@@ -184,36 +188,61 @@ class MainGamePanel(wx.Panel):
                 else:
                     btn.SetBackgroundColour("black")
 
-    def draw_player_name(self, player: Player):
+    def show_active_player(self, cur_player: Player):
         """
         Displays the name of the player which is on turn
-        :param player: The player which shall be displayed
+        :param cur_player: The player which is making the next turn
         :return: None
         """
-        self.cur_player_label.SetLabel(player.name)
+        if cur_player == self.player1:
+            self.player1_label.SetBackgroundColour(COLORS.CUR_PLAYER_BG)
+            self.player2_label.SetBackgroundColour(COLORS.WAITING_PLAYER_BG)
+        else:
+            self.player1_label.SetBackgroundColour(COLORS.WAITING_PLAYER_BG)
+            self.player2_label.SetBackgroundColour(COLORS.CUR_PLAYER_BG)
 
     def turn_button_pressed(self, evt):
+        """
+        Action executed, when 'turn' button is clicked
+        :param evt: The event object
+        :return: None
+        """
 
-        # If current player is MANUAL, set the position from ui
+        # If current player is MANUAL, set the position from ui pearls
         if self.cur_player.PlayerType.id == MANUAL_PLAYER.id:
-            self.cur_player.set_state(self.cur_state)
+
+            # Check if the user action is valid, if not break here
+            if not GameLogic.is_valid(self.last_state, self.cur_state):
+                print("Turn is not valid ...")
+                return
+            else:
+                self.cur_player.set_state(self.cur_state)
+                print("UI sends state: {}".format(self.cur_state))
 
         # Make the next step
         (player, state, has_won) = self.controller.make_step()
-        self.has_won = has_won
-        self.cur_state = state
+        print("{}:\n{} - has_won: {}".format(player.name, state, has_won))
         self.last_state = state
+        self.cur_state = copy.deepcopy(state)
+
         self.cur_player = self.controller.get_current_player()
-        self.draw_player_name(self.cur_player)
+        self.show_active_player(self.cur_player)
         self.draw_new_state(state)
 
         # What to do when player won the game
-        if has_won:
+        if self.controller.game_over:
             # Disable the buttons if the game is over
             self.btn_turn.Disable()
             self.btn_reset.Disable()
             # Show winning message
             print("{} has won the game".format(self.cur_player.name))
 
+        self.Layout()
+
     def reset_button_pressed(self, evt):
+        """
+            Action executed, when 'reset' button is clicked
+            :param evt: The event object
+            :return: None
+            """
         print("reset_button_pressed")

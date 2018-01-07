@@ -1,6 +1,6 @@
 from player.Player import Player
 from logic.State import State
-from PlayerDict import RANDOM_KI_PLAYER
+from player.PlayerDict import RANDOM_KI_PLAYER
 from random import randint
 
 #test_nim_array = ([1.0, 0.0, 1.0], [1.0, 0.0], [0.0])
