@@ -42,10 +42,8 @@ class MainGamePanel(wx.Panel):
         print("\tplayer2: {} - '{}'".format(player2_type_id, ALL_PLAYERS[player2_type_id].name))
 
         # Create players and game controller
-        self.player1_name = "Player 1 ({})".format(ALL_PLAYERS[player1_type_id].name)
-        self.player2_name = "Player 2 ({})".format(ALL_PLAYERS[player2_type_id].name)
-        self.player1 = create_player_by_type_id(player1_type_id, self.player1_name)
-        self.player2 = create_player_by_type_id(player2_type_id, self.player2_name)
+        self.player1 = create_player_by_type_id(player1_type_id, "Player 1")
+        self.player2 = create_player_by_type_id(player2_type_id, "Player 2")
 
         self.cur_player = self.player1
         self.last_state = State.get_start_state(cur_size)
@@ -69,8 +67,8 @@ class MainGamePanel(wx.Panel):
 
         # Create info area
         info_panel = wx.Panel(self)
-        self.player1_label = wx.StaticText(info_panel, label=self.player1_name)
-        self.player2_label = wx.StaticText(info_panel, label=self.player2_name)
+        self.player1_label = wx.StaticText(info_panel, label=str(self.player1))
+        self.player2_label = wx.StaticText(info_panel, label=str(self.player2))
         self.player1_label.SetFont(FONTS.TXT_BIG)
         self.player2_label.SetFont(FONTS.TXT_BIG)
         info_panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -221,7 +219,7 @@ class MainGamePanel(wx.Panel):
                 wx.MessageBox("Turn is not valid ...", 'Invalid changes', wx.OK | wx.ICON_ERROR)
                 return
             else:
-                print("UI sends state:\n{}".format(self.cur_state))
+                #print("UI sends state:\n{}".format(self.cur_state))
                 self.cur_player.set_state(self.cur_state)
 
         # Make the next step
@@ -240,7 +238,7 @@ class MainGamePanel(wx.Panel):
             self.btn_turn.Disable()
             self.btn_reset.Disable()
             # Show winning message
-            winning_message = "{} has won the game".format(self.cur_player.name)
+            winning_message = "{} has won the game".format(self.cur_player)
             print(winning_message)
             wx.MessageBox(winning_message, 'Game over', wx.OK | wx.ICON_INFORMATION)
 

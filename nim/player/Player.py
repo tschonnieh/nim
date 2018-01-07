@@ -13,6 +13,9 @@ class Player:
         self.PlayerType = player_type
         self.name = player_name
 
+    def __str__(self):
+        return "{} ({})".format(self.name, self.PlayerType.name)
+
     def step(self, actual_state: State):
         """
         returns the next valid state

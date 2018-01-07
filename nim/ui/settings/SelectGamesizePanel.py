@@ -17,7 +17,7 @@ class SelectGamesizePanel(wx.Panel):
         self.SetBackgroundColour(COLORS.SETTINGS_DETAILS_BG)
         self.SetSize(parent.Size)
 
-        self.button_sizes = [[3, 2, 1], [4, 3, 2], [5, 4, 3], [6, 5, 4], [7, 6, 5]]
+        self.button_sizes = [[3, 3, 3], [3, 2, 1], [4, 3, 2], [5, 4, 3], [6, 5, 4], [7, 6, 5]]
         self.selected_rbutton_id = 0
 
         # Restore last config if set
