@@ -1,5 +1,7 @@
+import functools
 import numpy as np
 from typing import List
+
 
 class State:
 
@@ -20,6 +22,11 @@ class State:
             rows.append(np.ones(nr_of_perls))
 
         return State(rows)
+
+    def __str__(self):
+        str_rows = map(lambda row: str(row), self.Rows)
+        str_repr = functools.reduce(lambda r1, r2: "{} {}".format(r1, r2), str_rows)
+        return str_repr
 
     def __eq__(self, other_state):
         """
