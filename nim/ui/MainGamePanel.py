@@ -218,10 +218,11 @@ class MainGamePanel(wx.Panel):
             # Check if the user action is valid, if not break here
             if not GameLogic.is_valid(self.last_state, self.cur_state):
                 print("Turn is not valid ...")
+                wx.MessageBox("Turn is not valid ...", 'Invalid changes', wx.OK | wx.ICON_ERROR)
                 return
             else:
+                print("UI sends state:\n{}".format(self.cur_state))
                 self.cur_player.set_state(self.cur_state)
-                print("UI sends state: {}".format(self.cur_state))
 
         # Make the next step
         (player, state, has_won) = self.controller.make_step()

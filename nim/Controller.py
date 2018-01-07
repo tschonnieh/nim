@@ -40,6 +40,8 @@ class Controller:
         next_state = cur_player.step(self.state)
         has_won = GameLogic.has_won(next_state)
 
+        self.state = next_state
+
         if has_won:
             self.game_over = True
 
