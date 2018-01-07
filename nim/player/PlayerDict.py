@@ -1,5 +1,4 @@
 
-
 class PlayerType:
     """
     Represents a type of player, which can play the nim game
@@ -16,10 +15,10 @@ class PlayerType:
         self.description = description
 
 
-MANUAL_PLAYER = PlayerType(1, "Person", "A person, which is manually playing")
-RANDOM_KI_PLAYER = PlayerType(2, "Random KI", "A KI playing with random actions")
-QLEARN_KI_PLAYER = PlayerType(3, "Q-Learning", "A KI using the Q-Learning algorithm for learning")
-PERFECT_KI_PLAYER = PlayerType(4, "Perfect Player (Logic)",
+MANUAL_PLAYER = PlayerType(0, "Manual Player", "A person, which is manually playing")
+RANDOM_KI_PLAYER = PlayerType(1, "Random KI", "A KI playing with random actions")
+QLEARN_KI_PLAYER = PlayerType(2, "Q-Learning", "A KI using the Q-Learning algorithm for learning")
+PERFECT_KI_PLAYER = PlayerType(3, "Perfect Player (Logic)",
                                "A KI, which always makes the best possible action. The KI uses a mathematical model")
 
 ALL_PLAYERS = [MANUAL_PLAYER, RANDOM_KI_PLAYER, QLEARN_KI_PLAYER, PERFECT_KI_PLAYER]

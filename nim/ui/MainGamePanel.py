@@ -179,6 +179,11 @@ class MainGamePanel(wx.Panel):
                     return row_id, col_id
 
     def draw_new_state(self, new_state):
+        """
+        Draws the new state on the UI
+        :param new_state: The state to draw
+        :return: None
+        """
         for (row_id, buttons) in enumerate(self.pearls_per_row):
             for (col_id, btn) in enumerate(buttons):
                 pearl_state = new_state.Rows[row_id][col_id]
@@ -207,7 +212,6 @@ class MainGamePanel(wx.Panel):
         :param evt: The event object
         :return: None
         """
-
         # If current player is MANUAL, set the position from ui pearls
         if self.cur_player.PlayerType.id == MANUAL_PLAYER.id:
 
@@ -235,14 +239,18 @@ class MainGamePanel(wx.Panel):
             self.btn_turn.Disable()
             self.btn_reset.Disable()
             # Show winning message
-            print("{} has won the game".format(self.cur_player.name))
+            winning_message = "{} has won the game".format(self.cur_player.name)
+            print(winning_message)
+            wx.MessageBox(winning_message, 'Game over', wx.OK | wx.ICON_INFORMATION)
 
         self.Layout()
 
     def reset_button_pressed(self, evt):
         """
-            Action executed, when 'reset' button is clicked
-            :param evt: The event object
-            :return: None
-            """
-        print("reset_button_pressed")
+        Action executed, when 'reset' button is clicked
+        :param evt: The event object
+        :return: None
+        """
+        print('Resetting state ...')
+        self.cur_state = copy.deepcopy(self.last_state)
+        self.draw_new_state(self.cur_state)

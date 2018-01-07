@@ -108,7 +108,9 @@ class SelectPlayerPanel(wx.Panel):
         :return:
         """
         player_selection_id = self.player_list_box.GetSelection()
-        print("Save player1: {}".format(ALL_PLAYERS[player_selection_id].name))
+        save_message = "Player type for player {}: '{}'".format(self.player_number, ALL_PLAYERS[player_selection_id].name)
+        print(save_message)
+        wx.MessageBox(save_message, 'Successfully saved changes', wx.OK | wx.ICON_INFORMATION)
         self.config.WriteInt("player" + str(self.player_number), player_selection_id)
         self.config.Flush()
 

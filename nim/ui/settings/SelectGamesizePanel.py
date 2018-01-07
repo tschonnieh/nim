@@ -100,13 +100,16 @@ class SelectGamesizePanel(wx.Panel):
         # If custom size button is clicked
         if self.radio_buttons[len(self.radio_buttons) - 1].GetValue() == True:
             print("Custom size not implemented")
+            wx.MessageBox('Custom size not implemented', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
         # If button with predefined size is clicked
         for (i, btn) in enumerate(self.radio_buttons):
             if btn.GetValue() == True:
                 selected_size = self.button_sizes[i]
-                print("Save size {}".format(selected_size))
+                saving_message = "game size: {}".format(selected_size)
+                print(saving_message)
+                wx.MessageBox(saving_message, 'Successfully saved changes', wx.OK | wx.ICON_INFORMATION)
                 self.config.Write("gamesize", str(selected_size))
                 self.config.Flush()
 
