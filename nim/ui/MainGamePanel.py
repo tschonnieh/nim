@@ -1,10 +1,11 @@
 from typing import List
+
 import wx
 
-from PlayerDict import ALL_PLAYERS
 import ui.res.values.colors as col
-
 from Controller import Controller
+from PlayerDict import ALL_PLAYERS, MANUAL_PLAYER
+from ai.randomPlayer import RandomPlayer
 from logic.GameLogic import GameLogic
 from logic.State import State
 from player.ManualPlayer import ManualPlayer
@@ -38,8 +39,10 @@ class MainGamePanel(wx.Panel):
         print("\tplayer2: {} - '{}'".format(player2_type_id, ALL_PLAYERS[player2_type_id].name))
 
         # Create players and game controller
-        self.player1 = ManualPlayer("Player 1 - {}".format(ALL_PLAYERS[player1_type_id].name))
-        self.player2 = ManualPlayer("Player 2 - {}.format(ALL_PLAYERS[player2_type_id].name")
+        self.player1 = ManualPlayer("Player 1 ({})".format(ALL_PLAYERS[player1_type_id].name))
+        self.player2 = RandomPlayer("Player 2 ({})".format(ALL_PLAYERS[player2_type_id].name))
+        self.cur_player = self.player1
+
         self.last_state = State.get_start_state(cur_size)
         self.cur_state = State.get_start_state(cur_size)
 
@@ -53,43 +56,44 @@ class MainGamePanel(wx.Panel):
         self.Layout()
 
         # start the game logic
-        # self.controller = Controller.start_game(self.cur_state, self.player1, self.player2)
+        self.controller = Controller()
+        self.controller.init_game(self.cur_state, self.player1, self.player2)
+        self.has_won = False
 
     def build_ui(self, gamesize: List):
 
-        pearls_panel = self.create_pearls_panel(gamesize)
-
-        pearls_panel.Bind(wx.EVT_TOGGLEBUTTON, self.on_pearl_clicked)
+        self.pearls_panel = self.create_pearls_panel(gamesize)
+        self.pearls_panel.Bind(wx.EVT_TOGGLEBUTTON, self.on_pearl_clicked)
 
         # Create info area
         info_panel = wx.Panel(self)
-        cur_player_label = wx.StaticText(info_panel, label="current player:")
-        self.cur_player = wx.StaticText(info_panel, label="Player XXX")
+        player_label = wx.StaticText(info_panel, label="current player:")
+        self.cur_player_label = wx.StaticText(info_panel, label="Player XXX")
         info_panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        info_panel_sizer.Add(cur_player_label, 1, wx.CENTER, 10)
+        info_panel_sizer.Add(player_label, 1, wx.CENTER, 10)
         info_panel_sizer.AddSpacer(5)
-        info_panel_sizer.Add(self.cur_player, 1, wx.CENTER, 10)
+        info_panel_sizer.Add(self.cur_player_label, 1, wx.CENTER, 10)
         info_panel.SetSizer(info_panel_sizer)
 
         # Create bottom area
         buttons_panel = wx.Panel(self)
-        btn_turn = wx.Button(buttons_panel, label='make turn')
-        btn_reset = wx.Button(buttons_panel, label='reset')
+        self.btn_turn = wx.Button(buttons_panel, label='make turn')
+        self.btn_reset = wx.Button(buttons_panel, label='reset')
 
         # Add events to buttons
-        btn_turn.Bind(wx.EVT_BUTTON, self.turn_button_pressed)
-        btn_reset.Bind(wx.EVT_BUTTON, self.reset_button_pressed)
+        self.btn_turn.Bind(wx.EVT_BUTTON, self.turn_button_pressed)
+        self.btn_reset.Bind(wx.EVT_BUTTON, self.reset_button_pressed)
 
         # Adjust buttons horizontal
         btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        btn_sizer.Add(btn_reset, 1, wx.CENTER, 10)
+        btn_sizer.Add(self.btn_reset, 1, wx.CENTER, 10)
         btn_sizer.AddSpacer(10)
-        btn_sizer.Add(btn_turn, 1, wx.CENTER, 10)
+        btn_sizer.Add(self.btn_turn, 1, wx.CENTER, 10)
         buttons_panel.SetSizer(btn_sizer)
 
         # Set the positions of the 'pearls'- and 'buttons'-panel
         main_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.Add(pearls_panel, wx.EXPAND | wx.ALL, 5)
+        main_sizer.Add(self.pearls_panel, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(info_panel, 0, wx.ALL | wx.CENTER, 5)
         main_sizer.Add(buttons_panel, 0, wx.ALL | wx.CENTER, 10)
         self.SetSizer(main_sizer)
@@ -138,6 +142,10 @@ class MainGamePanel(wx.Panel):
         :param evt:
         :return:
         """
+        # Allows changing the pearls only if manual player is playing
+        if self.cur_player.PlayerType.id != MANUAL_PLAYER.id or self.has_won:
+            return False
+
         clicked_btn = evt.EventObject
         clicked_pos = self.get_pearls_pos(clicked_btn)
 
@@ -182,10 +190,30 @@ class MainGamePanel(wx.Panel):
         :param player: The player which shall be displayed
         :return: None
         """
-        self.cur_player.SetLabel(player.name)
+        self.cur_player_label.SetLabel(player.name)
 
     def turn_button_pressed(self, evt):
-        print("turn_button_pressed")
+
+        # If current player is MANUAL, set the position from ui
+        if self.cur_player.PlayerType.id == MANUAL_PLAYER.id:
+            self.cur_player.set_state(self.cur_state)
+
+        # Make the next step
+        (player, state, has_won) = self.controller.make_step()
+        self.has_won = has_won
+        self.cur_state = state
+        self.last_state = state
+        self.cur_player = self.controller.get_current_player()
+        self.draw_player_name(self.cur_player)
+        self.draw_new_state(state)
+
+        # What to do when player won the game
+        if has_won:
+            # Disable the buttons if the game is over
+            self.btn_turn.Disable()
+            self.btn_reset.Disable()
+            # Show winning message
+            print("{} has won the game".format(self.cur_player.name))
 
     def reset_button_pressed(self, evt):
         print("reset_button_pressed")
