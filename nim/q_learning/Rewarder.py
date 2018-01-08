@@ -1,4 +1,6 @@
 from q_learning.Rewards import Rewards
+from logic.State import State
+
 import numpy as np
 
 class Rewarder():
@@ -7,42 +9,70 @@ class Rewarder():
         self.rewardInvalid = Rewards['Invalid']
         self.rewardWinning = Rewards['Winning']
         self.rewardLosing = Rewards['Losing']
-
-        self.reset()
+        self.initState = pow( 2, sum(pearlsPerRow) ) - 1
 
         print('Start creating Reward-Table')
         self.createRTable(pearlsPerRow, self.rewardInvalid, self.rewardLosing, self.rewardWinning)
         print('Finished creating Reward-Table')
 
-    def reset(self):
-        sumOfPearls = sum(self.pearlsPerRow)
-        self.curState = pow(2, sumOfPearls) - 1
-
     def getCurState(self):
         return self.curState
 
-    def step(self, curAction):
-        reward = self.R[self.curState][curAction]
-        done = False
+    def getInitState(self):
+        return self.initState
 
-        # Set next state if action is valid
+    def getReward(self, curState, action):
+        reward = self.R[curState][action]
+
+        # Check if action is valid
         if reward == self.rewardInvalid:
-            nextState = self.curState
+            valid = False
+            nextState = curState
         else:
-            nextState = curAction
+            valid = True
+            nextState = action
 
-        # Check if done
-        # No pearls left
-        if nextState == 0:
+        # Check if game is done
+        if reward == self.rewardWinning:
             done = True
-        # Winning state
-        elif reward == self.rewardWinning:
+            won = True
+        else:
+            done = False
+            won = False
+
+        # TODO: Special case if action = 0 ???
+        return reward
+
+    # TODO: Step function better then getReward
+    def stepG(self, curState, action):
+        curState = curState.to_flat_representation()
+        action = action.to_flat_representation()
+
+        nextState, reward, valid, done = self.step(curState, action)
+
+        nextState = State.from_flat_representation(self.pearlsPerRow, nextState)
+
+        return nextState, reward, valid, done
+
+    def step(self, curState, action):
+        reward = self.R[curState][action]
+
+        # Check if action is valid
+        if reward == self.rewardInvalid:
+            valid = False
+            nextState = curState
+        else:
+            valid = True
+            nextState = action
+
+        # Check if game is done
+        if reward == self.rewardWinning:
             done = True
-        # Loosing is not done -> so we can train for reaching winning state
+        else:
+            done = False
 
-        self.curState = nextState
-
-        return nextState, reward, done
+        # TODO: Special case if action = 0 ???
+        return nextState, reward, valid, done
 
     def createRTable(self, rows, rewardInvalid, rewardLosing, rewardWinning):
         numOfStates = pow(2, sum(rows))

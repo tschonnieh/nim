@@ -1,80 +1,144 @@
 from q_learning.QLearner import QLearner
 from q_learning.Rewarder import Rewarder
 from logic.State import State
+from ai.randomPlayer import RandomPlayer
+from q_learning.Evaluator import Evaluator
 
 import numpy as np
 import datetime
+import random
 
 class Trainer():
     def __init__(self, pearlsPerRow):
         self.pearlsPerRow = pearlsPerRow
-
-        # Determine number of states and actions
-
-        # TODO: Self nur für count Zero elements -> evtl in QLearner Function dafür bereitstellen
         self.numOfStates = pow(2, sum(rows))
         self.numOfActions = pow(2, sum(rows))
 
         # Initialize qLearner
         self.qLearn = QLearner.empty(self.numOfStates, self.numOfActions)
 
-    def setEnv(self, env):
-        self.env = env
-        self.env.reset()
+        # For Training against AI -> best is randomPlayer
+        self.secondPlayer = RandomPlayer("RandomPlayer")
+        self.rewarder = Rewarder(pearlsPerRow)
+        self.evaluator = Evaluator(pearlsPerRow, self.qLearn)
 
-    def trainEpisode(self, gamma, epsilon):
-        self.env.reset()
+        self.episodesPerEpoch = 1000
+        self.trainedEpisodes = 0
 
-        self.trainEpisodeDone = False
-        # TODO: Is this clever or better not as self but local?
-        self.curState = self.env.getCurState()
-        self.trainEpisodeDone = False
+    def trainEpisode(self):
+        curState = self.rewarder.getInitState()
+        otherPlayerFirst = bool(random.getrandbits(1))
+        done = False
 
-        while not self.trainEpisodeDone:
-            self.qLearn.learnStep(self.envCallback, gamma, epsilon, self.curState)
+        # Otherplayer first
+        if otherPlayerFirst:
+            curState = State.from_flat_representation(rows, curState)
+            curState = self.secondPlayer.step(curState)
+            curState = curState.to_flat_representation()
 
-    def trainEpoch(self, gamma, epsilon, episodesPerEpoch):
-        for e in range(0, episodesPerEpoch):
-            self.trainEpisode(gamma, epsilon)
+        while not done:
+            qStartState = curState
 
-    def trainEpochs(self, gamma, startEpsilon, episodesPerEpoch, epochs):
-        epsilon = startEpsilon
-        epsilonDecrement = 1.0 / epochs
+            # Q-Learning
+            if not done:
+                while curState == qStartState:
+                    curState = self.qLearn.learnStep(curState)
 
-        for e in range(0, epochs):
-            self.trainEpoch(gamma, epsilon, episodesPerEpoch)
+                    # Check if move was valid
+                    # TODO: Environment
+                    if self.rewarder.getReward(qStartState, curState) == self.rewarder.rewardInvalid or curState == 0:
+                        self.qLearn.immediateReward(qStartState, curState, self.rewarder.rewardInvalid)
+                        curState = qStartState
 
-            print(str(e+1) + ' / ' + str(epochs) + ' Epochs')
-            print('Number of zero Elements: ' + str(self.numOfStates * self.numOfActions - np.count_nonzero(self.qLearn.qTable)))
+                qAction = curState
 
-            epsilon -= epsilonDecrement
+            # Check if Q-Learning won
+            if self.rewarder.getReward(qStartState, curState) == self.rewarder.rewardWinning:
+                done = True
+                self.qLearn.immediateReward(qStartState, qAction, self.rewarder.rewardWinning)
 
-    def envCallback(self, curState, action):
-        nextState, reward, done = self.env.step(action)
+            rStatState = curState
+            # Other Player
+            if not done:
+                while rStatState == curState:
+                    curState = State.from_flat_representation(rows, curState)
+                    curState = self.secondPlayer.step(curState)
+                    curState = curState.to_flat_representation()
 
-        self.trainEpisodeDone = done
-        self.curState = nextState
+                # TODO: No need to check if this player makes wrong states
+                if self.rewarder.getReward(rStatState, curState) == self.rewarder.rewardInvalid or curState == 0:
+                    curState = rStatState
 
-        return reward, nextState
+            qFinalState = curState
+
+            # Check if Other Player won
+            if self.rewarder.getReward(rStatState, qFinalState) == self.rewarder.rewardWinning:
+                done = True
+                self.qLearn.immediateReward(qStartState, qAction, self.rewarder.rewardLosing)
+
+            # Update Q-Table
+            if not done:
+                self.qLearn.updateQ(qStartState, qAction, qFinalState)
+
+    def trainEpoch(self):
+        # Group episodes to epochs -> only calculate performance stats after epoch -> saves time
+        for e in range(0, self.episodesPerEpoch):
+            self.trainEpisode()
+            self.trainedEpisodes += 1
+
+    def trainEpochs(self):
+        # 2 Steps in training
+        numberOfUnplayableActions = (sum(rows) + 1) * self.numOfStates # All winning states + no pearls left are states which will never require action
+        numberOfUnknownActions = self.numOfStates * self.numOfStates # State action pairs we did not try yet
+
+        # 1) Explore al state action pairs -> High Exploration Factor and Learning Rate
+        print("Start exploration of unknown state-action-pairs")
+        # TODO: Optimize Parameters
+        self.qLearn.setParameter('gamma', 0.9)
+        self.qLearn.setParameter('epsilon', 1.0)
+        self.qLearn.setParameter('learningRate', 1.0)
+
+        while numberOfUnknownActions > numberOfUnplayableActions:
+            self.trainEpoch()
+            numberOfUnknownActions = self.qLearn.getNumberOfUnknownActions()
+            print("Unknown state-action-pairs: " + str( numberOfUnknownActions - numberOfUnplayableActions ))
+        print("Finished exploration of unknown state-action-pairs")
+
+        # 2) Find optimal solution -> Smaller Exploration Factor and Learning Rate
+        print("Start optimization towards optimal strategy")
+        numberOfLosingStates = self.numOfStates
+        # TODO: Optimize Parameters
+        self.qLearn.setParameter('gamma', 0.9)
+        self.qLearn.setParameter('epsilon', 0.3)
+        self.qLearn.setParameter('learningRate', 0.3)
+
+        while numberOfLosingStates > 0:
+            self.trainEpoch()
+            numberOfLosingStates = self.evaluator.evaluate()
+            print("Losing in " + str(numberOfLosingStates) + ' start states against a perfect player')
+        print("Reached optimal strategy")
 
     def startTraining(self):
         startTime = datetime.datetime.now()
+        print("Start training at: " + str(startTime) )
 
-        self.trainEpochs(0.8, 1.0, 200, 500)
+        self.trainEpochs()
 
         endTime = datetime.datetime.now()
-        print(endTime - startTime)
+        print("Finished training at: " + str(endTime))
+        print("Duration: " + str(endTime - startTime) )
+        print("Trained for " + str(self.trainedEpisodes) + " episodes")
 
-        # Save q Table
-        print(self.qLearn.qTable)
-        self.qLearn.saveQTable('test.npy')
+        # TODO: Save qTable
 
 # Define size of game field
-rows = [3, 3, 3]
-
-# Initialize rewarder and create reward table
-rewarder = Rewarder(rows)
+rows = [3, 2, 2]
 
 tr = Trainer(rows)
-tr.setEnv(rewarder)
+
 tr.startTraining()
+np.save('test.npy', tr.qLearn.qTable)
+
+# TODO: Function save file laden
+# TODO: Größen definieren
+# TODO: __main__

@@ -10,6 +10,12 @@ class QPlayer(Player):
         # TODO: Get Information which file to load
         self.qLogic = QLearner.fromSaveFile('test.npy')
 
+    @classmethod
+    def qPlayerFromQTable(cls, player_name, qTable):
+        qPlayer = cls(player_name)
+        qPlayer.qLogic.qTable = qTable
+        return qPlayer
+
     def step(self, gameState):
         # Get information for unflatening
         perlsPerRow = gameState.get_structure()

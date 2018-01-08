@@ -8,17 +8,18 @@ class QLearner():
         pass
 
     @classmethod
-    def empty(cls, stateNum, actionNum):
+    def empty(cls, numberOfStates, numberOfActions):
         qLearner = cls()
-        qLearner.stateNum = stateNum
-        qLearner.actionNum = actionNum
-        qLearner.qTable = np.zeros((stateNum, actionNum))
+        qLearner.numberOfStates = numberOfStates
+        qLearner.numberOfActions = numberOfActions
+        # TODO: Change DataType to reduce memory req
+        qLearner.qTable = np.zeros((numberOfStates, numberOfActions), np.float16)
 
-        # TODO: Weg?
+        # TODO: MagicNumbers
+        # TODO: Change values over training time
         qLearner.gamma = 0.8
         qLearner.epsilon = 1.0 # Exploration Factor
-        qLearner.learning = False
-        qLearner.rewardCallback = None
+        qLearner.learningRate = 0.1
 
         return qLearner
 
@@ -32,24 +33,48 @@ class QLearner():
     def step(self, curState):
         return np.argmax(self.qTable[curState])
 
-    def learnStep(self, envCallback, gamma, epsilon, curState):
+    def setParameter(self, parameter, value):
+        if hasattr(self, parameter):
+            setattr(self, parameter, value)
+        else:
+            print("No parameter named: " + parameter)
+
+    def learnStep(self, curState):
         # Exploration vs Exploitation
         r = random.random()
+        if r <= self.epsilon:
+            # Exploration -> Pick a random, possible action
+            # action = random.randrange(numOfStates)
 
-        if r <= epsilon:
-            # Exploration -> Pick a random action
-            nextAction = random.randrange(self.actionNum)
+            # First we try to find the state action pairs we have not tried yet
+            # TODO: Is this ok? Not mentioned
+            # Check if there are actions we have not tried yet
+            # TODO: MagicNumber
+            unknownActions = np.argwhere(self.qTable[curState] == 0.0)
+            if len(unknownActions) > 0:
+                action = np.random.choice(unknownActions[:, 0])
+            # Else we choice a valid action
+            # TODO: MagicNumber
+            else:
+                validActions = np.argwhere(self.qTable[curState] > -400.0)
+                action = np.random.choice(validActions[:, 0])
         else:
             # Exploitation -> Find max in q table to determine next action
-            nextAction = np.argmax(self.qTable[curState])
+            action = np.argmax(self.qTable[curState])
 
-        # Test if action is possible, which reward is granted and which state will be next
-        # TODO: Call to environment
-        reward, nextState = envCallback(curState, nextAction)
+        return action
 
-        # Update Q-Table
-        nextNextState = np.max(self.qTable[nextState])
-        self.qTable[curState][nextAction] = reward + self.gamma * nextNextState
+    def updateQ(self, startState, action, finalState):
+        reward = 0 # Rewards are only provided through immediateReward
+        oldQ = self.qTable[startState][action]
+        maxQNewState = np.max(self.qTable[finalState])
+        self.qTable[startState][action] = oldQ + self.learningRate * (reward + self.gamma * maxQNewState - oldQ)
+
+    def immediateReward(self, startState, action, reward):
+        self.qTable[startState][action] = reward
+
+    def getNumberOfUnknownActions(self):
+        return self.numberOfStates * self.numberOfActions - np.count_nonzero(self.qTable)
 
     def saveQTable(self, pathToSavefile):
         if os.path.exists(pathToSavefile):
