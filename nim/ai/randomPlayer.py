@@ -2,6 +2,7 @@ from player.Player import Player
 from logic.State import State
 from player.PlayerDict import RANDOM_KI_PLAYER
 from random import randint
+import numpy as np
 
 #test_nim_array = ([1.0, 0.0, 1.0], [1.0, 0.0], [0.0])
 #test_state = State(test_nim_array)
@@ -44,7 +45,9 @@ class RandomPlayer(Player):
         idx_list = self.get_idx_list_of_ones(nim_array[rand_row])
         """ write indices of randomly picked pearls in return list """
         for i in range(0, rand_amount_of_pearls):
-            return_idx_list.append([rand_row, idx_list[i]])
+            idx = np.random.choice(idx_list)
+            return_idx_list.append([rand_row, idx])
+            idx_list.remove(idx)
         return return_idx_list
 
     def get_idx_list_of_ones(self, row):

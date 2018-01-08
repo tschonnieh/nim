@@ -35,7 +35,8 @@ class PerfectPlayer(Player):
         """
         rand_row = self.pick_random_row(actual_state)
         idx_list = self.get_idx_list_of_ones(actual_state.Rows[rand_row])
-        actual_state.toggle_pearl(rand_row, idx_list[0])
+        idx = np.random.choice(idx_list)
+        actual_state.toggle_pearl(rand_row, idx)
         next_state = actual_state
         #print(next_state.Rows)
         return next_state
