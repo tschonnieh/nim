@@ -7,6 +7,7 @@ from ui.settings.SettingsPanel import SettingsPanel
 import ui.res.values.colors as COLORS
 import ui.res.values.fonts as FONTS
 
+
 class MainWindow:
     """ The main window of the nim UI. Contains the 'frame' object of wxpython """
 
@@ -33,7 +34,7 @@ class MainWindow:
         Creates all child panels of the frame
         """
         # Create title label
-        self.title = wx.StaticText(self.frame, wx.ID_ANY, u"Nim Game", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.title = wx.StaticText(self.frame, wx.ID_ANY, "Nim Game", wx.DefaultPosition, wx.DefaultSize, 0)
         self.title.SetFont(FONTS.MAIN_TITLE)
 
         # Display the panel with the startmenue
@@ -47,15 +48,10 @@ class MainWindow:
         self.settings_panel.evt_back.add(self.show_main_menue)
         self.main_panels.append(self.settings_panel)
 
-        # Create the panel for the maingame
-        self.main_game_panel = MainGamePanel(self.frame)
-        self.main_panels.append(self.main_game_panel)
-
         # Set the size of the shown panel to maximum framesize
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(self.title, 0, wx.ALIGN_CENTER | wx.ALL, 20)
         self.sizer.Add(self.main_menue_panel, 1, wx.ALIGN_CENTER | wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.main_game_panel, 1, wx.ALIGN_CENTER | wx.EXPAND | wx.ALL)
         self.sizer.Add(self.settings_panel, 1, wx.ALIGN_CENTER | wx.EXPAND | wx.ALL)
         self.frame.SetSizer(self.sizer)
 
@@ -65,9 +61,14 @@ class MainWindow:
 
     def start_game(self):
         """ Shows the main game panel and hides all other panels """
+        # Create the panel for the maingame
+        self.main_game_panel = MainGamePanel(self.frame)
+        self.main_game_panel.evt_back.add(self.show_main_menue)
+        self.main_panels.append(self.main_game_panel)
+        self.sizer.Add(self.main_game_panel, 1, wx.ALIGN_CENTER | wx.EXPAND | wx.ALL)
+
         self.main_game_panel.build_game()
         self.show_panel(self.main_game_panel)
-
 
     def show_settings(self):
         """ Shows the settings panel and hides all other panels """

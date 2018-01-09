@@ -61,15 +61,15 @@ class SelectGamesizePanel(wx.Panel):
         content_panel.SetSizer(content_vbox_sizer)
 
         # Create the radio button for a custom gamesize
-        custom_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        radio_btn_custom = wx.RadioButton(content_panel, label='Custom')
-        radio_btn_custom.SetFont(FONTS.TXT_NORMAL)
-        self.radio_buttons.append(radio_btn_custom)
-        txt_ctrl_custom = wx.TextCtrl(content_panel)
-        txt_ctrl_custom.SetFont(FONTS.TXT_NORMAL)
-        custom_button_sizer.Add(radio_btn_custom)
-        custom_button_sizer.Add(txt_ctrl_custom, flag=wx.LEFT, border=5)
-        content_vbox_sizer.Add(custom_button_sizer, 0, wx.LEFT, 5)
+        #custom_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        #radio_btn_custom = wx.RadioButton(content_panel, label='Custom')
+        #radio_btn_custom.SetFont(FONTS.TXT_NORMAL)
+        #self.radio_buttons.append(radio_btn_custom)
+        #txt_ctrl_custom = wx.TextCtrl(content_panel)
+        #txt_ctrl_custom.SetFont(FONTS.TXT_NORMAL)
+        #custom_button_sizer.Add(radio_btn_custom)
+        #custom_button_sizer.Add(txt_ctrl_custom, flag=wx.LEFT, border=5)
+        #content_vbox_sizer.Add(custom_button_sizer, 0, wx.LEFT, 5)
 
         # Aligns butttons horizontal
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)

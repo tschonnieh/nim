@@ -3,7 +3,7 @@ from typing import List
 import copy
 import wx
 
-import ui.res.values.colors as col
+from Event import *
 from Controller import Controller
 from logic.GameLogic import GameLogic
 from logic.State import State
@@ -24,9 +24,16 @@ class MainGamePanel(wx.Panel):
     def __init__(self, parent, **args):
         super(MainGamePanel, self).__init__(parent)
 
+        # The events
+        self.evt_back = Event()
+
     def build_game(self):
+
+        self.ClearBackground()
+        self.Refresh()
+
         # Set MainMenuePanel color and to fullscreen
-        self.SetBackgroundColour(col.MAIN_MENUE_BG)
+        self.SetBackgroundColour(COLORS.MAIN_MENUE_BG)
         self.SetSize(self.Parent.Size)
 
         # Read the gamesize and playertypes from the config
@@ -62,6 +69,9 @@ class MainGamePanel(wx.Panel):
 
     def build_ui(self, gamesize: List):
 
+        # Open dialog when palyer pressed 'ESC'
+        self.Bind(wx.EVT_CHAR_HOOK, self.open_leave_game_dialog)
+
         self.pearls_panel = self.create_pearls_panel(gamesize)
         self.pearls_panel.Bind(wx.EVT_TOGGLEBUTTON, self.on_pearl_clicked)
 
@@ -81,23 +91,30 @@ class MainGamePanel(wx.Panel):
         buttons_panel = wx.Panel(self)
         self.btn_turn = wx.Button(buttons_panel, label='make turn')
         self.btn_reset = wx.Button(buttons_panel, label='reset')
+        self.stop_game = wx.Button(buttons_panel, label='Stop game')
 
         # Add events to buttons
         self.btn_turn.Bind(wx.EVT_BUTTON, self.turn_button_pressed)
         self.btn_reset.Bind(wx.EVT_BUTTON, self.reset_button_pressed)
+        self.stop_game.Bind(wx.EVT_BUTTON, self.open_leave_game_dialog)
 
         # Adjust buttons horizontal
         btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        btn_sizer.Add(self.btn_reset, 1, wx.CENTER, 10)
+        btn_sizer.Add(self.stop_game, 0, wx.ALIGN_LEFT | wx.CENTER, 10)
+        btn_sizer.AddStretchSpacer()
+        btn_sizer.Add(self.btn_reset, 0, wx.ALIGN_CENTER | wx.CENTER, 10)
         btn_sizer.AddSpacer(10)
-        btn_sizer.Add(self.btn_turn, 1, wx.CENTER, 10)
+        btn_sizer.Add(self.btn_turn, 0, wx.ALIGN_CENTER | wx.CENTER, 10)
+        btn_sizer.AddStretchSpacer()
+        btn_sizer.AddSpacer(50)
+
         buttons_panel.SetSizer(btn_sizer)
 
         # Set the positions of the 'pearls'- and 'buttons'-panel
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         main_sizer.Add(self.pearls_panel, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(info_panel, 0, wx.ALL | wx.CENTER, 5)
-        main_sizer.Add(buttons_panel, 0, wx.ALL | wx.CENTER, 10)
+        main_sizer.Add(buttons_panel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL | wx.CENTER, 10)
         self.SetSizer(main_sizer)
 
     def create_pearls_panel(self, row_sizes):
@@ -219,7 +236,7 @@ class MainGamePanel(wx.Panel):
                 wx.MessageBox("Turn is not valid ...", 'Invalid changes', wx.OK | wx.ICON_ERROR)
                 return
             else:
-                #print("UI sends state:\n{}".format(self.cur_state))
+                # print("UI sends state:\n{}".format(self.cur_state))
                 self.cur_player.set_state(self.cur_state)
 
         # Make the next step
@@ -253,3 +270,30 @@ class MainGamePanel(wx.Panel):
         print('Resetting state ...')
         self.cur_state = copy.deepcopy(self.last_state)
         self.draw_new_state(self.cur_state)
+
+    def open_leave_game_dialog(self, event):
+        """
+        Opens a dialog, which allows user to stop the game and go back to the main menue.
+        :return:
+        """
+        dlg = wx.MessageDialog(None, "Do you want to stop the game?", 'Stop game', wx.YES_NO | wx.ICON_QUESTION)
+        result = dlg.ShowModal()
+        if result == wx.ID_YES:
+            print("No pressed")
+            self.evt_back()
+        else:
+            print("No pressed")
+
+    def on_key_up_pressed(self, event):
+        """
+        Event called when KEY_UP event is fired
+        :param event:
+        :return:
+        """
+        print("OnKeyUP pressed!")
+        keyCode = event.GetKeyCode()
+        if keyCode == wx.WXK_ESCAPE:
+            self.open_leave_game_dialog()
+        event.Skip()
+
+

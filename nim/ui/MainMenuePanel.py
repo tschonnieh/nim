@@ -7,6 +7,7 @@ import ui.res.values.fonts as FONTS
 import ui.res.values.colors as COLORS
 import ui.res.values.fonts as FONTS
 
+
 class MainMenuePanel(wx.Panel):
 
     def __init__(self, parent, **args):
@@ -49,7 +50,7 @@ class MainMenuePanel(wx.Panel):
         b_start.Bind(wx.EVT_BUTTON, lambda x: self.evt_startgame())
         b_choose_players.Bind(wx.EVT_BUTTON, lambda x: self.evt_show_settings())
         b_quit.Bind(wx.EVT_BUTTON, self.quit_btn_click)
-        
+
         # Align buttons vertical
         vert_box = wx.BoxSizer(wx.VERTICAL)
 
