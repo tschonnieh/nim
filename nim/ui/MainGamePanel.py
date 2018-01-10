@@ -279,7 +279,8 @@ class MainGamePanel(wx.Panel):
         dlg = wx.MessageDialog(None, "Do you want to stop the game?", 'Stop game', wx.YES_NO | wx.ICON_QUESTION)
         result = dlg.ShowModal()
         if result == wx.ID_YES:
-            print("No pressed")
+            print("Yes pressed")
+            self.Unbind(wx.EVT_CHAR_HOOK)
             self.evt_back()
         else:
             print("No pressed")
