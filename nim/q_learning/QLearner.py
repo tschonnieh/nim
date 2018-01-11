@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import os
-import sys
+from q_learning.Rewards import Rewards
 
 class QLearner():
     def __init__(self):
@@ -12,11 +12,8 @@ class QLearner():
         qLearner = cls()
         qLearner.numberOfStates = numberOfStates
         qLearner.numberOfActions = numberOfActions
-        # TODO: Change DataType to reduce memory req
         qLearner.qTable = np.zeros((numberOfStates, numberOfActions), np.float16)
 
-        # TODO: MagicNumbers
-        # TODO: Change values over training time
         qLearner.gamma = 0.8
         qLearner.epsilon = 1.0 # Exploration Factor
         qLearner.learningRate = 0.1
@@ -47,16 +44,13 @@ class QLearner():
             # action = random.randrange(numOfStates)
 
             # First we try to find the state action pairs we have not tried yet
-            # TODO: Is this ok? Not mentioned
             # Check if there are actions we have not tried yet
-            # TODO: MagicNumber
             unknownActions = np.argwhere(self.qTable[curState] == 0.0)
             if len(unknownActions) > 0:
                 action = np.random.choice(unknownActions[:, 0])
             # Else we choice a valid action
-            # TODO: MagicNumber
             else:
-                validActions = np.argwhere(self.qTable[curState] > -400.0)
+                validActions = np.argwhere(self.qTable[curState] > Rewards['Invalid'])
                 action = np.random.choice(validActions[:, 0])
         else:
             # Exploitation -> Find max in q table to determine next action
@@ -78,16 +72,23 @@ class QLearner():
 
     def saveQTable(self, pathToSavefile):
         if os.path.exists(pathToSavefile):
-            # TODO: Ask if overwrite?
-            print('Savefile: ' + str(pathToSavefile) + ' already exists -> File not saved')
-        else:
-            np.save(pathToSavefile, self.qTable)
-            print('Saved Q-Table to ' + str(pathToSavefile))
+            print('Savefile: ' + str(pathToSavefile) + ' already exists')
+            print('O: Overwrite K: Keep the old file')
+
+            while True:
+                c = input()
+                c = c.lower()
+                if c == 'o':
+                    break
+                elif c == 'k':
+                    return
+
+        np.save(pathToSavefile, self.qTable)
+        print('Saved Q-Table to ' + str(pathToSavefile))
 
     def loadQTable(self, pathToFile):
         if os.path.exists(pathToFile):
             self.qTable = np.load(pathToFile)
             print('Loaded Q-Table from ' + str(pathToFile))
         else:
-            print('File ' +  str(pathToFile) + ' not found -> Terminate program')
-            sys.exit(0)
+            raise RuntimeError(str(pathToFile) + ' not found')

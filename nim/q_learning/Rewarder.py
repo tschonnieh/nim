@@ -40,39 +40,7 @@ class Rewarder():
             done = False
             won = False
 
-        # TODO: Special case if action = 0 ???
         return reward
-
-    # TODO: Step function better then getReward
-    def stepG(self, curState, action):
-        curState = curState.to_flat_representation()
-        action = action.to_flat_representation()
-
-        nextState, reward, valid, done = self.step(curState, action)
-
-        nextState = State.from_flat_representation(self.pearlsPerRow, nextState)
-
-        return nextState, reward, valid, done
-
-    def step(self, curState, action):
-        reward = self.R[curState][action]
-
-        # Check if action is valid
-        if reward == self.rewardInvalid:
-            valid = False
-            nextState = curState
-        else:
-            valid = True
-            nextState = action
-
-        # Check if game is done
-        if reward == self.rewardWinning:
-            done = True
-        else:
-            done = False
-
-        # TODO: Special case if action = 0 ???
-        return nextState, reward, valid, done
 
     def createRTable(self, rows, rewardInvalid, rewardLosing, rewardWinning):
         numOfStates = pow(2, sum(rows))
@@ -124,9 +92,8 @@ class Rewarder():
                         break
 
                 # Check if we remove all pearls -> losing
-                # TODO: Losing or invalid?
                 if nextState == 0:
-                    self.R[curState][nextState] = rewardInvalid
+                    self.R[curState][nextState] = rewardLosing
                     continue
 
         # Determine all losing states

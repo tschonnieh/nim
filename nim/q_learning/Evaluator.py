@@ -8,7 +8,7 @@ class Evaluator():
     def __init__(self, perlsPerRow, qLearner):
         self.perlsPerRow = perlsPerRow
         self.numOfStates = pow(2, sum(self.perlsPerRow))
-        # TODO: Unschön
+
         self.qPlayer = QPlayer.qPlayerFromQTable('QPlayer', qLearner.qTable)
         self.perfectPlayer = ai.perfectPlayer.PerfectPlayer("PerfectPlayer")
 
