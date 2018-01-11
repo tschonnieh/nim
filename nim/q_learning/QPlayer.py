@@ -19,8 +19,10 @@ class QPlayer(Player):
     def qPlayer_from_savefile(cls, player_name, pearlsPerRow):
         if SaveFileManager.has_savefile_for_size(pearlsPerRow):
             filePath = SaveFileManager.get_path_of_savefile_for_size(pearlsPerRow)
-            qTable = QLearner.fromSaveFile(filePath)
-            return QPlayer.qPlayerFromQTable(player_name, qTable)
+            qPlayer = cls(player_name)
+            qPlayer.qLogic = QLearner.fromSaveFile(filePath)
+            #return cls.qPlayerFromQTable(player_name, qTable)
+            return qPlayer
         else:
             raise RuntimeError('No saveFile for the specified size')
 
@@ -36,7 +38,3 @@ class QPlayer(Player):
         nextFlatState = self.qLogic.step(flatState)
 
         return State.from_flat_representation(perlsPerRow, nextFlatState)
-
-#a = QPlayer.has_savefile_for_size([3,2,2])
-#b = QPlayer.qPlayer_from_savefile('Blub', [3,2,2])
-#pass
