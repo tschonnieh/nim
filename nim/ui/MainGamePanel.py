@@ -277,7 +277,7 @@ class MainGamePanel(wx.Panel):
 
     def leave_game_with_error(self, err_message):
         """
-
+        Displays an error dialog end goes back to the main menue.
         :param err_message:
         :return:
         """
@@ -289,8 +289,13 @@ class MainGamePanel(wx.Panel):
     def open_leave_game_dialog(self, event):
         """
         Opens a dialog, which allows user to stop the game and go back to the main menue.
+        When the game is already over, no dialog is displayed.
         :return:
         """
+        if self.controller.game_over:
+            self.evt_back()
+            return
+
         dlg = wx.MessageDialog(None, "Do you want to stop the game?", 'Stop game', wx.YES_NO | wx.ICON_QUESTION)
         result = dlg.ShowModal()
         if result == wx.ID_YES:

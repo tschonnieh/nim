@@ -79,8 +79,8 @@ class SelectPlayerPanel(wx.Panel):
         saveButton.Bind(wx.EVT_BUTTON, self.save_button_clicked)
         cancelButton = wx.Button(self, label='Cancel')
         cancelButton.Bind(wx.EVT_BUTTON, self.cancel_button_clicked)
-        hsizer_buttons.Add(saveButton, flag=wx.RIGHT)
-        hsizer_buttons.Add(cancelButton, flag=wx.LEFT, border=5)
+        hsizer_buttons.Add(cancelButton, flag=wx.RIGHT)
+        hsizer_buttons.Add(saveButton, flag=wx.LEFT, border=5)
 
         # Set the content box at top and buttons at the bottom
         vertical_box = wx.BoxSizer(wx.VERTICAL)

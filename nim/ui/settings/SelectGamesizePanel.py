@@ -77,8 +77,8 @@ class SelectGamesizePanel(wx.Panel):
         saveButton.Bind(wx.EVT_BUTTON, self.save_button_clicked)
         cancelButton = wx.Button(self, label='Cancel')
         cancelButton.Bind(wx.EVT_BUTTON, self.cancel_button_clicked)
-        button_sizer.Add(saveButton, flag=wx.RIGHT)
-        button_sizer.Add(cancelButton, flag=wx.LEFT, border=5)
+        button_sizer.Add(cancelButton, flag=wx.RIGHT)
+        button_sizer.Add(saveButton, flag=wx.LEFT, border=5)
 
         # Place content on the top and buttons at bottom
         vertical_box = wx.BoxSizer(wx.VERTICAL)
