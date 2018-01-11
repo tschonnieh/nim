@@ -49,8 +49,12 @@ class MainGamePanel(wx.Panel):
         print("\tplayer2: {} - '{}'".format(player2_type_id, ALL_PLAYERS[player2_type_id].name))
 
         # Create players and game controller
-        self.player1 = create_player_by_type_id(player1_type_id, "Player 1")
-        self.player2 = create_player_by_type_id(player2_type_id, "Player 2")
+        try:
+            self.player1 = create_player_by_type_id(player1_type_id, "Player 1", cur_size)
+            self.player2 = create_player_by_type_id(player2_type_id, "Player 2", cur_size)
+        except Exception as ex:
+            print(ex)
+            self.leave_game_with_error(str(ex))
 
         self.cur_player = self.player1
         self.last_state = State.get_start_state(cur_size)
@@ -270,6 +274,17 @@ class MainGamePanel(wx.Panel):
         print('Resetting state ...')
         self.cur_state = copy.deepcopy(self.last_state)
         self.draw_new_state(self.cur_state)
+
+    def leave_game_with_error(self, err_message):
+        """
+
+        :param err_message:
+        :return:
+        """
+        dlg = wx.MessageDialog(None, err_message, 'Error while creating player', wx.ICON_ERROR)
+        dlg.ShowModal()
+        self.Unbind(wx.EVT_CHAR_HOOK)
+        self.evt_back()
 
     def open_leave_game_dialog(self, event):
         """
