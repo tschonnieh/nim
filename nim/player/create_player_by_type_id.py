@@ -30,7 +30,7 @@ def create_player_by_type_id(player_type_id: int, player_name: str, gamesize: Li
         if not QPlayer.has_savefile_for_size(gamesize):
             raise Exception("Can't create QPlayer, because no pretrained QMatrix exists.")
 
-        return QPlayer(player_name)
+        return QPlayer.qPlayer_from_savefile(player_name, gamesize)
 
     else:
         raise Exception("Invalid player_type_id: '{}'".format(player_type_id))
