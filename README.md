@@ -1,11 +1,10 @@
-# nim
-Game-AI-Development in Python
+# Nim
+Spiele-KI-Entwicklung in Python
 
 Nim ist ein Spiel für zwei Personen, bei welchem abwechselnd eine Anzahl von Gegenständen(wie z.B. Streichhölzer) weggenommen werden. Dabei darf jede Person, wenn sie am Zug ist, eine beliebige Anzahl von Hölzern in einer Reihe wegnehmen. Sie darf allerdings nicht aus verschiedenen Reihen im gleichen Zug Hölzer wegnehmen. In diesem Projekt wird in der Misère-Variante gespielt, sodass derjenige verliert, der das letzte Hölzchen wegnimmt.
 
-# How to start the game
-Just run the python file 'startGame.py' with a compatible python environment.
-e.G. "python startGame.py"
+# Ausführen des Spiels
+Um das Spiel starten zu können, muss die Datei `startGame.py` mit einer kompatiblen Python Umgebung ausgeführt werden. (z.B. `python startGame.py`)
 
 ## Settings
 In diesem Bereich hat man mehrere Möglichkeiten, das Spiel einzustellen.
@@ -27,7 +26,7 @@ Der perfekte Spieler spielt stets nach einer Gewinnstrategie und macht keinen fa
 **ACHTUNG**: Dieser Spieler ist von Anfang an nicht spielfähig, sondern muss erst 
 "trainiert" werden(Siehe Abschnitt "How to train Q-Learning Player"). Sobald er trainiert wurde, ist er dem Perfekten Spieler gleichzusetzen, da er über einen komplexen und langwierigen Algorithmus trainiert wurde. (siehe Abschnitt Q-Learning). 
 
-### Game-Size
+### Gamesize
 Darüber hinaus hat man die Möglichkeit, die Spielfeldgröße anzupassen. Die Ziffern geben die Anzahl der Spielsteine pro Reihe(von oben nach unten) an. An dieser Stelle kann beispielsweise die Spielfeldgröße **[5, 4, 3]** gewählt und anschließend mit **save** bestätigt werden.
 **ACHTUNG**: Tritt in dem darauf folgendem Spiel ein Q-Learning Spieler an, so muss darauf geachtet werden, dass man hier die selbe Spielfeldgröße wählt, die man ebenso beim Trainieren für den Q-Learning Spieler verwendet hat, da sonst die Größe der Q-Matrix nicht übereinstimmt.
 
@@ -47,7 +46,7 @@ Nach Abschluss des Trainings befindet sich das zugehörige Savefile im Verzeichn
 
 Der Trainingsprozess kann darüberhinaus auch visualisiert werden. Dazu muss die Variable `ENABLE_VISU` im Skript `q_learning/Trainer.py` auf `True` gesetzt werden. Der Trainingsprozess wird dadurch allerdings stark verlangsamt.
 
-# Dependencies
+# Abhängigkeiten
 - python 3.6
 - wxpython
 - pillow
@@ -55,13 +54,13 @@ Der Trainingsprozess kann darüberhinaus auch visualisiert werden. Dazu muss die
 - random
 - matplotlib
 
-## How to install with anaconda
+## Installation mit anaconda
 - conda install wxpython -c conda-forge
 - conda install pillow -c conda-forge
 - conda install numpy
 - conda install matplotlib -c conda-forge
 
-## How to install with pip
+## Installation mit pip
 - pip install wxpython
 - pip install pillow
 - pip install numpy
@@ -92,7 +91,7 @@ Beide Spieler beziehen sich das Interface *Player* aus `player/Player.py`, wodur
 ### Der perfekte Spieler
 Der perfekte Spieler folgt stets der sogenannten **Gewinnstrategie nach Bouton**.
 
-####Gewinnstrategie nach Bouton
+#### Gewinnstrategie nach Bouton
 In dieser Gewinnstrategie werden die Spielsteine pro Reihe binär dargestellt. Daraus werden wiederum Spaltensummen berechnet, wodurch sich  aus der erhaltenen "Spaltensummen-Reihe" anschließend eine Verlust-/Gewinnstellung erkennen lässt. Errechnet sich für den ziehenden Spieler eine Stellung mit nur geraden Spaltensummen, so ist dies eine Verluststellung. Dies würde für den ziehenden Spieler bedeuten, dass er bei einem perfekten Spiel des Gegners verlieren würde. Errechnet sich hingegen für den ziehenden Spieler eine Stellung mit mindestens einer ungeraden Spaltensumme, so ist dies eine Gewinnstellung. Der ziehende Spieler hat demnach die Möglichkeit, eine Stellung mit nur geraden Spaltensummen mit dem nächsten Zug zu erreichen, sodass bei einem eigenen perfekten Spiel der ziehende Spieler gewinnen würde. Nachfolgendes Beispiel veranschaulicht diese Gewinnstrategie:
 
     | | |
@@ -125,6 +124,24 @@ Daraus lassen sich nun wieder die Spaltensummen errechnen:
 
 Der Gegner erhält also eine Stellung mit nur geraden Spaltensummen und bekommt demnach eine Verluststellung.
 
+### Der zufällige Spieler
+Wenn der zufällige Spieler am Zug ist, wählt er stets eine zufällige Reihe aus, in welcher noch Spielsteine vorhanden sind. Anschließend wählt er eine zufällige Anzahl an Spielsteinen in dieser Reihe aus und entfernt diese. Er folgt demnach keiner Strategie, sondern bezieht sich ausschließlich auf eine Zufallsfunktion während seinem Zug.
+
+### Implementierung
+Die für den perfekten/zufälligen Spieler relevanten Komponenten sind in dem Verzeichnis `ai` zu finden. Nachfolgend sind diese kurz vorgestellt:
+
+- `perfectPlayer.py` - Implementierung des perfekten Spielers inkl. Gewinnstrategie
+- `randomPlayer.py` - Implementierung des zufälligen Spielers
+
+Diesbezüglich werden im Folgenden die wesentlichen Funktionen erläutert:
+
+**`perfectPlayer.py`**
+
+Der perfekte Spieler entscheidet zunächst, ob für ihn aktuell eine Gewinnstellung oder eine Verluststellung vorliegt. Diese Überprüfung erlangt er durch die Funktion `is_winning_sate`, welche die bereits erläuterte Gewinnstrategie enthält. Erhält der perfekte Spieler vor seinem Zug eine Gewinnstellung, so ist es ihm nicht möglich mit seinem nachfolgenden Zug ebenso eine Gewinnstellung zu erzeugen. Aus diesem Grund wählt er das Prinzip des "minimalen Schadens" an und entfernt einen einzigen Spielstein aus den verbliebenen Spielsteinen mit der Methode `get_next_best_possible_state`. Erhält er hingegen eine Verluststellung, so versucht er innerhalb der Funktion `get_next_perfect_state` aus den vorhandenen Spielsteinen eine Gewinnstellung zu erzeugen, um diese als nächsten Zustand zu übermitteln.
+
+**`randomPlayer.py`**
+
+Beim zufälligen Spieler wird lediglich in der Methode `pick_random_pearls` überprüft, an welchen Stellen noch verfügbare Spielsteine vorhanden sind. Anschließend wird per Zufallsprinzip eine Reihe ausgewählt und eine zufällige Anzahl der noch vorhandenen Spielsteine entfernt und somit als nächsten Zustand übermittelt.
 
 ## Q-Learning
 In diesem Abschnitt wird auf das Verfahren Q-Learning und die umgesetzten Komponenten eingegangen. Das Ziel war es, einen Spieler mit dem Verfahren Q-Learning zu implementieren und diesen für das Spiel Nim zu trainieren.
@@ -134,7 +151,7 @@ Q-Learning ist ein modellfreies Verfahren des Reinforcement Learnings. Ziel ist 
 
 ![Agent Umgebungsinteraktion](https://cdn-images-1.medium.com/max/1600/1*Z2yMvuQ1-t5Ol1ac_W4dOQ.png)
 
-Im Rahmen einer Interaktion gibt das Q-Learning Verfahren eine Aktion vor, auf welche die Umgebung mit einem Feedback und dem neuen Zustand reagiert. Das Feedback kann dabei direkt jeden Interaktionsschritt bewerten oder diese als Neutral einstufen und erst bei einem bestimmten Ereignis, z.B. im Falle von Nim, bei Gewinn oder Verlust, ein bedeutungsvolles Feedback übergeben. Somit lernt das Verfahren, ob die gewählte Aktion in dem entsprechenden Zustand positiv ist.
+Im Rahmen einer Interaktion gibt das Q-Learning Verfahren eine Aktion vor, auf welche die Umgebung mit einem Feedback und dem neuen Zustand reagiert. Das Feedback kann dabei direkt jeden Interaktionsschritt bewerten oder diese als *neutral* einstufen und erst bei einem bestimmten Ereignis, z.B. im Falle von Nim, bei Gewinn oder Verlust, ein bedeutungsvolles Feedback übergeben. Somit lernt das Verfahren, ob die gewählte Aktion in dem entsprechenden Zustand positiv ist.
 
 Nach und nach wird im Rahmen von vielen Interaktionen jede mögliche Aktion für jeden möglichen Zustand bewertet. Neben dem Feedback der Umgebung fließen außerdem die bereits erlernten Kentnisse in die Bewertung mit ein. Somit werden Aktionen besser eingestuft, welche nach dem eigenen Kenntnisstand, einen guten Nachfolgezustand bewirken. Das heißt, Aktionen werden besser bewertet, wenn diese direkt oder indirekt zu einem positiven Feedback führen. In einem iterativen Prozess wird durch die wiederholte Interaktion mit der Umgebung die optimale Strategie ausgehend von einem Gewinnzustand ermittelt und bis in die Anfangszustände zurückgeführt.
 
@@ -154,7 +171,7 @@ Beim Lernvorgang muss das Q-Learning für jede Interaktion eine Aktion wählen. 
 
 Exploitation beschreibt eine Strategie, welche stets die bestmögliche Aktion auswählt. Diese Strategie ist für den Lernvorgang nur bedingt geeignet. Hat das Verfahren einmal eine Strategie gefunden, welche zum gewünschten Ziel führt, so wird anschließend immer nur diese Strategie verfolgt, auch wenn es andere, bessere Strategien gibt.
 
-Die Exploitation Strategie beschreibt die Auswahl zufälliger Aktionen. Somit werden, auch wenn bereits eine Strategie gefunden wurde, dennoch andere Aktionen ausgewählt und überprüft, ob diese evtl. besser sind.
+Die Exploitation Strategie beschreibt die Auswahl zufälliger Aktionen. Somit werden, auch wenn bereits eine Strategie gefunden wurde, dennoch andere Aktionen ausgewählt und überprüft, ob diese evtevntuell besser sind.
 
 Eine Kombination aus Exploration und Exploitation ist somit für den Lernprozess ideal.
 
