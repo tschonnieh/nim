@@ -38,18 +38,14 @@ Hat man alle Einstellungen vorgenommen, kann das Spiel beginnen!
 ## Spielbeginn & Spielablauf
 Durch Klicken auf **Start Game** im Hauptfenster beginnt das Spiel. Die UI zeigt durch eine <span style="background-color:yellow">gelbe Markierung</span> an, welcher Spieler im Moment am Zug ist. Ein manueller Spieler muss zunächst seine Spielsteine auswählen und anschließend den Zug durch **make turn** bestätigen. Bei allen anderen Spielern reicht es jedoch aus, den nächsten Zug sofort mit **make turn** in die Wege zu leiten. Nimmt ein Spieler den letzten Spielstein, signalisiert die UI das Ende des Spiels und zeigt in einem Pop-Up-Fenster den Gewinner an.
 
-# How to train Q-Learning Player
-Run the python file 'QTrainer.py' with a compatible python environment.
-e.G. "python QTrainer.py"
-Here you can set the size of the game board.
-The training process may take some time.
+# Training des Q-Learning Spielers
+Für das Training des Q-Learning Spielers wird das Skript `QTrainer.py` über python gestartet (`python QTrainer.py`).
+Nun kann die Größe des Spielfeldes eingegeben und der Trainingsprozess gestartet werden.
+Die Dauer des Trainingsprozesses is abhängig von der Spielfeldgröße.
 
-After the training is finished, the corresponding savefiles
-can be found under 'q_learning/saveFile'.
+Nach Abschluss des Trainings befindet sich das zugehörige Savefile im Verzeichnis `q_learning/saveFile`.
 
-In order to activate the Visualization of the q-learning process, you can set 
-the variable ENABLE_VISU in the file 'q_learning/Trainer.py' to True.
-This will greatly increase the duration of the training process.
+Der Trainingsprozess kann darüberhinaus auch visualisiert werden. Dazu muss die Variable `ENABLE_VISU` im Skript `q_learning/Trainer.py` auf `True` gesetzt werden. Der Trainingsprozess wird dadurch allerdings stark verlangsamt.
 
 # Dependencies
 - python 3.6
@@ -128,4 +124,70 @@ Daraus lassen sich nun wieder die Spaltensummen errechnen:
 	2-0-2 (Spaltensummen der einzelnen Reihen)
 
 Der Gegner erhält also eine Stellung mit nur geraden Spaltensummen und bekommt demnach eine Verluststellung.
-## Q-Learning & Q Learning Spieler
+
+
+## Q-Learning
+In diesem Abschnitt wird auf das Verfahren Q-Learning und die umgesetzten Komponenten eingegangen. Das Ziel war es, einen Spieler mit dem Verfahren Q-Learning zu implementieren und diesen für das Spiel Nim zu trainieren.
+
+### Q-Learning
+Q-Learning ist ein modellfreies Verfahren des Reinforcement Learnings. Ziel ist es, eine optimale Verhaltensstrategie für einen Agenten in einer vorgegebenen Umgebung zu erlernen. Hierbei steht kein Modell dieser Umgebung bereit. Das heißt, das Verfahren muss die optimale Strategie durch die Interaktion mit der Umgebung erlernen. 
+
+![Agent Umgebungsinteraktion](https://cdn-images-1.medium.com/max/1600/1*Z2yMvuQ1-t5Ol1ac_W4dOQ.png)
+
+Im Rahmen einer Interaktion gibt das Q-Learning Verfahren eine Aktion vor, auf welche die Umgebung mit einem Feedback und dem neuen Zustand reagiert. Das Feedback kann dabei direkt jeden Interaktionsschritt bewerten oder diese als Neutral einstufen und erst bei einem bestimmten Ereignis, z.B. im Falle von Nim, bei Gewinn oder Verlust, ein bedeutungsvolles Feedback übergeben. Somit lernt das Verfahren, ob die gewählte Aktion in dem entsprechenden Zustand positiv ist.
+
+Nach und nach wird im Rahmen von vielen Interaktionen jede mögliche Aktion für jeden möglichen Zustand bewertet. Neben dem Feedback der Umgebung fließen außerdem die bereits erlernten Kentnisse in die Bewertung mit ein. Somit werden Aktionen besser eingestuft, welche nach dem eigenen Kenntnisstand, einen guten Nachfolgezustand bewirken. Das heißt, Aktionen werden besser bewertet, wenn diese direkt oder indirekt zu einem positiven Feedback führen. In einem iterativen Prozess wird durch die wiederholte Interaktion mit der Umgebung die optimale Strategie ausgehend von einem Gewinnzustand ermittelt und bis in die Anfangszustände zurückgeführt.
+
+Die folgende Formel zeigt die beschriebene Lernstrategie auf:
+
+![Q-Learning](http://latex.codecogs.com/gif.latex?Q%28state,%20action%29%20=%20Reward%28state,%20action%29%20+%20\gamma%20%5C%3Bmax%28Q%28nextState,%20*%29%29)
+
+### Nichtdeterministische Umgebung
+Da das Spiel Nim abwechselnd von zwei Spielern gespielt wird, ergibt sich ein nicht deterministisches Verhalten für das Q-Learning Verfahren. Die vom Q-Learning ausgewählte Aktion führt zwar deterministisch in einen Nachfolgezustand, allerdings ist dieser nur für den anderen Spieler, welcher nun am Zug ist, von Interesse. Erst die Aktion dieses zweiten Spielers bestimmt, welcher Zustand das Q-Learning Verfahren im nächsten Schriit erwartet. Der zweite Spieler und seine Aktionen sind aus der Sicht des Q-Learning Verfahrens somit Teil einer nichtdeterministischen Umgebung.
+
+Statt der eben aufgezeigten Formel, kommt somit die folgende zum Einsatz:
+
+![](http://latex.codecogs.com/gif.latex?Q%28state,%20action%29%20=%20Q%28state,action%29%20+%20\alpha%20%5b%20Reward%28state,%20action%29%20+%20\gamma%20\%5c%20max%28Q%28nextState,%20*%29%29%20-%20\alpha\%5c%20Q%28state,action%29%5d)
+
+### Exploration vs. Exploitation
+Beim Lernvorgang muss das Q-Learning für jede Interaktion eine Aktion wählen. Die Auswahl dieser Aktion ist für den Lernfortschritt von großer Bedeutung. Hierbei unterscheidet man zwischen Exploration und Exploitation.
+
+Exploitation beschreibt eine Strategie, welche stets die bestmögliche Aktion auswählt. Diese Strategie ist für den Lernvorgang nur bedingt geeignet. Hat das Verfahren einmal eine Strategie gefunden, welche zum gewünschten Ziel führt, so wird anschließend immer nur diese Strategie verfolgt, auch wenn es andere, bessere Strategien gibt.
+
+Die Exploitation Strategie beschreibt die Auswahl zufälliger Aktionen. Somit werden, auch wenn bereits eine Strategie gefunden wurde, dennoch andere Aktionen ausgewählt und überprüft, ob diese evtl. besser sind.
+
+Eine Kombination aus Exploration und Exploitation ist somit für den Lernprozess ideal.
+
+### Implementierung
+Alle Komponentnen des Q-Learning sind in dem Verzeichiss `q_learning` zu finden. Im folgenden werden diese kurz vorgestellt:
+
+- `QLearner.py` - Implementierung des Q-Learning Verfahrens
+- `QPlayer.py` - Wrapper für die Verwendung als Nim-Spieler
+- `Trainer.py` - Implementierung eines Trainers, welcher einen Q-Learning Spieler gegen den zufälligen Spieler trainiert
+- `Evaluator.py` - Funktionen zur Evaluation des trainierten Spielers
+- `Rewards.py` - Definition der Rewards für das Training
+- `SaveFileManager.py` - Hilfsfunktionen zum Speichern und Laden von trainierten Spielern
+- `Rewarder.py` - Hilfsfunktionen zum Training ohne GUI
+- `Logger.py` - Hilfsfunktionen zum Loggen von Informationen
+
+Im folgenden werden die wichtigsten Funktionalitäten für das Q-Learning beschrieben.
+
+*`QLearner.py`*
+
+Die Funktion `learnStep` wählt eine Aktion entsprechend der Exploration vs. Exploitation Strategie aus. Ist diese Aktion illegal oder führt sie zu einem direkten Sieg oder Verlust, so wird der entsprechende Reward über die Funktion `immediateReward` dem Q-Learning-Verfahren übergeben und in die Q-Matrix eingetragen. Ist dies eine Aktion ohne direktes Feedback, erfolgt die Aktualisierung der Q-Matrix, entsprechend der vorgestellten Formel über die Funktion `updateQ`.
+
+*`QPlayer.py`*
+
+Die QPlayer Klasse implementiert das Interface für die Kommunikation mit dem Spiel entsprechend `player/Player.py`. Die Funktion `step` ist dabei für die Auswahl der nächsten Aktion zuständig. Hierbei wird der aktuelle Zustand in eine Binärzahl konvertiert, welche den einfachen Zugriff auf die Q-Matrix erlaubt.
+
+Beim Erstellen eines Q-Players kann außerdem ein Dateipfad, zu einer gespeicherten Q-Matrix angegeben werden. Somit kann der Q-Player mit vortrainierten Q-Matrizen initialisiert werden.
+
+*`Trainer.py`*
+
+Die Klasse Trainer ist für das Training eines Q-Players verantwortlich. Hierbei werden mehrere Episoden des Nim Spiels gegen den zufälligen Spieler ausgeführt. Die Parameter Learning Rate, Exploration Factor und Gamma können dabei variiert werden.
+
+Die implementierte Trainingsstrategie beginnt mit hohen Werten für die Learning Rate (1.0) und den Exploration Factor (1.0). Sobald jedes Zustands-Aktions-Paar mindestens einmal ausprobiert wurde, werden beide Parameter verkleinert (Learning Rate = Exploration Factor = 0.3). Das Training ist beendet, sobald der Q-Player genauso gut wie der perfekte Spieler spielt.
+
+*`Evaluator.py`*
+
+Die Evaluation des Q-Players erfolgt durch die Klasse Evaluator. Hierbei tritt der Q-Player gegen den perfekten Spieler in mehreren Episoden an. Als Startzustand wird nach und nach jeder mögliche Zustand des Spielfeldes verwendet. Somit kann das Verhalten beider Spieler in allen möglichen Situationen verglichen werden.
