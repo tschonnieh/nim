@@ -160,7 +160,7 @@ Die folgende Formel zeigt die beschriebene Lernstrategie auf:
 ![Q-Learning](http://latex.codecogs.com/gif.latex?Q%28state,%20action%29%20=%20Reward%28state,%20action%29%20+%20\gamma%20%5C%3Bmax%28Q%28nextState,%20*%29%29)
 
 ### Nichtdeterministische Umgebung
-Da das Spiel Nim abwechselnd von zwei Spielern gespielt wird, ergibt sich ein nicht deterministisches Verhalten für das Q-Learning Verfahren. Die vom Q-Learning ausgewählte Aktion führt zwar deterministisch in einen Nachfolgezustand, allerdings ist dieser nur für den anderen Spieler, welcher nun am Zug ist, von Interesse. Erst die Aktion dieses zweiten Spielers bestimmt, welcher Zustand das Q-Learning Verfahren im nächsten Schriit erwartet. Der zweite Spieler und seine Aktionen sind aus der Sicht des Q-Learning Verfahrens somit Teil einer nichtdeterministischen Umgebung.
+Da das Spiel Nim abwechselnd von zwei Spielern gespielt wird, ergibt sich ein nicht deterministisches Verhalten für das Q-Learning Verfahren. Die vom Q-Learning ausgewählte Aktion führt zwar deterministisch in einen Nachfolgezustand, allerdings ist dieser nur für den anderen Spieler, welcher nun am Zug ist, von Interesse. Erst die Aktion dieses zweiten Spielers bestimmt, welcher Zustand das Q-Learning Verfahren im nächsten Schritt erwartet. Der zweite Spieler und seine Aktionen sind aus der Sicht des Q-Learning Verfahrens somit Teil einer nichtdeterministischen Umgebung.
 
 Statt der eben aufgezeigten Formel, kommt somit die folgende zum Einsatz:
 
@@ -171,7 +171,7 @@ Beim Lernvorgang muss das Q-Learning für jede Interaktion eine Aktion wählen. 
 
 Exploitation beschreibt eine Strategie, welche stets die bestmögliche Aktion auswählt. Diese Strategie ist für den Lernvorgang nur bedingt geeignet. Hat das Verfahren einmal eine Strategie gefunden, welche zum gewünschten Ziel führt, so wird anschließend immer nur diese Strategie verfolgt, auch wenn es andere, bessere Strategien gibt.
 
-Die Exploitation Strategie beschreibt die Auswahl zufälliger Aktionen. Somit werden, auch wenn bereits eine Strategie gefunden wurde, dennoch andere Aktionen ausgewählt und überprüft, ob diese evtevntuell besser sind.
+Die Exploration Strategie beschreibt die Auswahl zufälliger Aktionen. Somit werden, auch wenn bereits eine Strategie gefunden wurde, dennoch andere Aktionen ausgewählt und überprüft, ob diese eventuell zu einer besseren Strategie führen.
 
 Eine Kombination aus Exploration und Exploitation ist somit für den Lernprozess ideal.
 
