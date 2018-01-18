@@ -82,6 +82,22 @@ Nachfolgend wird jede Unterkategorie im Detail erläutert.
 ## User Interface (UI)
 
 ## Spiellogik & Manueller Spieler
+Für die Implementierung von Nim muss zunächst der Spielzustand dargestellt werden. Basierend auf diesem können die verschiedenen Spieler agieren und es kann geprüft werden, ob ein Zug eines Spielers gültig ist oder ob er gewonnen hat.
+
+### Implementierung
+Die Komponenten der Spiellogik sind in dem Verzeichnis `logic` zu finden. Es handelt sich dabei um:
+- `State.py` - Implementierung eines Spielzustands
+- `GameLogic.py` - Implementierung der Methoden zur Prüfung eines Spielzugs
+
+Im folgenden werden die Funktionalitäten für die Spiellogik beschrieben.
+
+**`State.py`**
+Die Klasse `State` stellt einen Spielzustand über eine `typing.List` von `numpy arrays` dar. Dabei steht jedes `array` für eine Reihe von Objekten, das genau soviele Elemente enthält wie es Objekte gibt. 
+Der Startspielzustand initialisiert alle Elemente der `arrays` mit `1`. Wird ein Element entfernt, so wird an der entsprechenden Stelle der verschachtelten Liste eine `1` durch eine `0` ersetzt. Hierfür steht die Methode `toggle_pearl` zur Verfügung.
+Für den perfekten Spieler wird die Umwandlung des Spielzustands in eine Binärdarstellung benötigt (siehe Gewinnstrategie nach Bouton). Dafür wurde die Methode `to_binary_representation` implementiert.
+
+**`GameLogic.py`**
+Die Spiellogik prüft, ob der Zug eines Spielers erlaub ist (`is_valid`) und ob ein Spieler gewonnen hat (`has_won`).
 
 ## Künstliche Intelligenz (KI) & Zufälliger Spieler
 In diesem Abschnitt wird insbesondere auf die beiden Python-Files `ai/perfectPlayer.py` und `ai/randomPlayer.py` eingegangen. Das Ziel war es, einen perfekten Spieler nach einer vorgegeben Gewinnstrategie zu realisieren. Zusätzlich sollte noch ein zufälliger Spieler entwickelt werden, der rein zufällige, aber dennoch erlaubte Spielzüge vornimmt.
