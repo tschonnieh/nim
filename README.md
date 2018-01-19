@@ -70,18 +70,15 @@ Der Trainingsprozess kann darüberhinaus auch visualisiert werden. Dazu muss die
 * * *
 
 # Das Projekt ##
-Das Nim-Projekt lässt sich in vier Unterkategorien unterteilen:
+Das Nim-Projekt lässt sich in drei Unterkategorien unterteilen:
 
-1. User Interface (UI)
-2. Spiellogik & Manueller Spieler
-3. Künstliche Intelligenz (KI) & Zufälliger Spieler
-4. Q-Learning & Q-Learning Spieler
+1. Spiellogik & Manueller Spieler
+2. Künstliche Intelligenz (KI) & Zufälliger Spieler
+3. Q-Learning & Q-Learning Spieler
 
 Nachfolgend wird jede Unterkategorie im Detail erläutert.
 
-## User Interface (UI)
-
-## Spiellogik & Manueller Spieler
+## Spiellogik
 Für die Implementierung von Nim muss zunächst der Spielzustand dargestellt werden. Basierend auf diesem können die verschiedenen Spieler agieren und es kann geprüft werden, ob ein Zug eines Spielers gültig ist oder ob er gewonnen hat.
 
 ### Implementierung
